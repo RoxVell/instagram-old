@@ -1,0 +1,16 @@
+body {
+  font-family: 'Roboto', 'sans-serif';
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+input, button { outline: none; }
+
+ul { list-style-type: none; }
+
+section, header, footer {
+  padding: 0 50px;
+}

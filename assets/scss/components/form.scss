@@ -1,0 +1,33 @@
+@import '../vars/colors';
+
+.form {
+  .form-element {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  label {
+    color: $color-dark;
+    font-size: 14px;
+    padding: 5px 0;
+  }
+
+  label, button {
+    display: block;
+  }
+
+  label.required::after {
+    content: '*';
+    color: $color-red;
+    margin-left: 3px;
+  }
+
+  .form-title {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+  }
+}

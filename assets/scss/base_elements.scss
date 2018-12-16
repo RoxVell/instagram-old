@@ -1,0 +1,36 @@
+@import './vars/colors';
+
+input {
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
+  color: $color-dark;
+  line-height: 20px;
+  padding: 6px 8px;
+  box-shadow: inset 0 1px 2px rgba(27,31,35,.075);
+
+  &:focus {
+    border-color: #2188ff;
+    box-shadow: inset 0 1px 2px rgba(27,31,35,.075),0 0 0 .2em rgba(3,102,214,.3);
+  }
+}
+
+button {
+  border: none;
+}
+
+button.btn {
+  padding: 10px 50px;
+  font-size: 16px;
+  border: 1px solid rgba(27,31,35,.2);
+  border-radius: .25em;
+  cursor: pointer;
+}
+
+a, a:visited {
+  color: $color-blue;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

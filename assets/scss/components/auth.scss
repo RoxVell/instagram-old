@@ -1,0 +1,24 @@
+@import '../vars/colors';
+@import '../components/form.scss';
+@import '../elements/button-primary.scss';
+
+section.auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-form {
+  width: 300px;
+  display: flex;
+  border: 1px solid #d1d5da;
+  border-radius: 4px;
+}
+
+.auth-form > div {
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}

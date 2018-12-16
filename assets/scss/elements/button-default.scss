@@ -1,0 +1,22 @@
+@import '../vars/colors';
+
+// Button
+$button-background-color: #eff3f6;
+$button-background-image: linear-gradient(-180deg,#fafbfc,#eff3f6 90%);
+$button-color: $color-dark;
+
+// Button hover
+$button-background-color-hover: #eff3f6;
+
+
+
+.btn {
+  display: block;
+  color: $button-color;
+  background-color: $button-background-color;
+  background-image: $button-background-image;
+
+  &:hover {
+    background-color: $button-background-color-hover;
+  }
+}

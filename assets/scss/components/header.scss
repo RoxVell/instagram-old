@@ -1,0 +1,42 @@
+.header {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-menu {
+  display: flex;
+}
+
+.logo {
+  width: 35px;
+  height: 35px;
+  background-image: url('~static/images/icons/instagram.svg');
+  background-repeat: no-repeat;
+}
+
+.header-menu__item {
+  width: 20px;
+  height: 20px;
+  background-position: center;
+  background-size: cover;
+}
+
+.header-menu__item:not(:last-child) {
+  margin-right: 25px;
+}
+
+.header-icon-active {
+  fill: black;
+}
+
+// user auth
+ul.auth {
+  display: flex;
+  font-size: 14px;
+
+  .auth-login {
+    margin-right: 14px;
+  }
+}
