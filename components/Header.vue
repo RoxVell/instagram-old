@@ -20,19 +20,14 @@
         </ul>
       </nav>
       <div>
-        <template v-if="$store.state.user.user">
-          <!-- Here user profile -->
-        </template>
-        <template v-else>
-          <ul class="auth">
-            <a href="/auth">
-              <li class="auth-login">Войти</li>
-            </a>
-            <a href="/auth">
-              <li class="auth-signup">Зарегистрироваться</li>
-            </a>
-          </ul>
-        </template>
+        <ul class="auth">
+          <a href="/auth">
+            <li class="auth-login">Войти</li>
+          </a>
+          <a href="/auth">
+            <li class="auth-signup">Зарегистрироваться</li>
+          </a>
+        </ul>
       </div>
     </div>
   </header>
