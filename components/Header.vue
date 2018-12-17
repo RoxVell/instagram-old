@@ -20,14 +20,19 @@
         </ul>
       </nav>
       <div>
-        <ul class="auth">
-          <a href="/auth">
-            <li class="auth-login">Войти</li>
-          </a>
-          <a href="/auth">
-            <li class="auth-signup">Зарегистрироваться</li>
-          </a>
-        </ul>
+        <template v-if="$store.state.user.user">
+          <!-- Here user profile -->
+        </template>
+        <template v-else>
+          <ul class="auth">
+            <a href="/auth">
+              <li class="auth-login">Войти</li>
+            </a>
+            <a href="/auth">
+              <li class="auth-signup">Зарегистрироваться</li>
+            </a>
+          </ul>
+        </template>
       </div>
     </div>
   </header>
