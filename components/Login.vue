@@ -8,7 +8,7 @@
     </div>
     
     <div class="form-element">
-      <label for="login-password" >Пароль</label>
+      <label for="login-password">Пароль</label>
       <input id="login-password" type="password">
     </div>
 
