@@ -5,7 +5,7 @@
         <div class="logo"></div>
       </a>
       <nav>
-        <ul class="header-menu">
+        <!-- <ul class="header-menu">
           <li class="header-menu__item">
             <svg x="0px" y="0px" viewBox="0 0 512 512">
               <g><path d="M506.555,208.064L263.859,30.367c-4.68-3.426-11.038-3.426-15.716,0L5.445,208.064 c-5.928,4.341-7.216,12.665-2.875,18.593s12.666,7.214,18.593,2.875L256,57.588l234.837,171.943c2.368,1.735,5.12,2.57,7.848,2.57 c4.096,0,8.138-1.885,10.744-5.445C513.771,220.729,512.483,212.405,506.555,208.064z"/></g>
@@ -17,11 +17,12 @@
               <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23 s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92 c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17 s-17-7.626-17-17S14.61,6,23.984,6z"/>
             </svg>
           </li>
-        </ul>
+        </ul> -->
       </nav>
       <div>
-        <template v-if="$store.state.user.user">
-          <!-- Here user profile -->
+        <template v-if="$store.getters['user/isAuth']">
+          <span>{{ $store.state.user.user.email }}</span>
+          <button class="link" @click="signOut">Выйти</button>
         </template>
         <template v-else>
           <ul class="auth">
@@ -40,7 +41,11 @@
 
 <script>
 export default {
-  
+  methods: {
+    signOut() {
+      this.$store.dispatch('user/signOut')
+    }
+  }
 }
 </script>
 

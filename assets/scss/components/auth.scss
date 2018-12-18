@@ -2,6 +2,8 @@
 @import '../components/form.scss';
 @import '../elements/button-primary.scss';
 
+$form-width: 350px;
+
 section.auth {
   display: flex;
   flex-direction: column;
@@ -10,7 +12,7 @@ section.auth {
 }
 
 .auth-form {
-  width: 300px;
+  width: $form-width;
   display: flex;
   border: 1px solid #d1d5da;
   border-radius: 4px;
@@ -21,4 +23,12 @@ section.auth {
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.auth-switch {
+  width: $form-width;
+  display: flex;
+  justify-content: center;
+  padding-top: 15px;
+  padding-bottom: 15px;
 }

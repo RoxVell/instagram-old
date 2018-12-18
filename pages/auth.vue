@@ -4,8 +4,8 @@
       <component :is="currentComponent"></component>
     </div>
 
-    <div>
-      <button @click="switchComponent">Переключить</button>
+    <div class="auth-switch">
+      <p @click="switchComponent" v-html="switchMessage"></p>
     </div>
     
   </section>
@@ -22,7 +22,16 @@ export default {
   },
   data() {
     return {
-      currentComponent: "login"
+      currentComponent: 'login',
+    }
+  },
+  computed: {
+    switchMessage() {
+      return (this.currentComponent === 'login') ?
+        'Нет аккаунта? <span>Создайте</span>' : 'Уже есть аккаунт? <span>Войти</span>'
+    },
+    isAuth() {
+      return this.$store.getters['user/isAuth']
     }
   },
   methods: {
