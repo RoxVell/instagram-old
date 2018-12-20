@@ -3,7 +3,7 @@
     <p class="form-title">Авторизуйтесь</p>
 
     <div class="form-element">
-      <label for="auth-login">Логин</label>
+      <label for="auth-login">Email</label>
       <input id="auth-login" type="text" v-model="email">
     </div>
     
@@ -28,8 +28,17 @@ export default {
     }
   },
   methods: {
-    signInWithEmailAndPassword() {
-      this.$store.dispatch('user/signInWithEmailAndPassword', { email: this.email, password: this.password })
+    async signInWithEmailAndPassword() {
+      try {
+        let user = await this.$store.dispatch('user/signInWithEmailAndPassword', {
+          email: this.email,
+          password: this.password
+        })
+
+        this.$nuxt.$router.push('/')
+      } catch(error) {
+        
+      }
     },
   }
 }

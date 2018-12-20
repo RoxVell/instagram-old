@@ -9,6 +9,7 @@
     <div class="form-element">
       <label class="required" for="signup-password">Пароль</label>
       <input id="signup-password" type="password" v-model="password">
+      <p class="form-element__desc">Пароль должен содержать не менее 8 символов</p>
     </div>
 
     <div class="form-element">

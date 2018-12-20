@@ -26,12 +26,12 @@
         </template>
         <template v-else>
           <ul class="auth">
-            <a href="/auth">
+            <nuxt-link to="/auth/login" tag="a">
               <li class="auth-login">Войти</li>
-            </a>
-            <a href="/auth">
+            </nuxt-link>
+            <nuxt-link to="/auth/signup" tag="a">
               <li class="auth-signup">Зарегистрироваться</li>
-            </a>
+            </nuxt-link>
           </ul>
         </template>
       </div>

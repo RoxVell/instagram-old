@@ -28,11 +28,10 @@ export const actions = {
       let user = await firebase.auth().signInWithEmailAndPassword(email, password)
       commit('UPDATE_USER')
     } catch(error) {
-      let errorCode = error.code
-      let errorMessage = error.message
-
-      console.error(`${errorMessage} (${errorCode})`)
-      return errorMessage
+      console.log(error);
+      // console.error(`${error.message} (${error.code})`)
+      throw Error(error.message)
+      // return new Error(errorMessage) 
     }
   },
   async signOut({ commit }) {

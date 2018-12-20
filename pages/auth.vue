@@ -1,43 +1,57 @@
 <template>
   <section class="auth">
+
     <div class="auth-form form">
-      <component :is="currentComponent"></component>
+      <nuxt-child></nuxt-child>
     </div>
 
     <div class="auth-switch">
-      <p @click="switchComponent" v-html="switchMessage"></p>
+      <p>
+        {{ switchMessage.message }}
+        <nuxt-link :to="switchMessage.path.link">{{ switchMessage.path.text }}</nuxt-link>
+      </p>
     </div>
     
   </section>
 </template>
 
 <script>
-import Login from '~/components/Login'
-import Signup from '~/components/Signup'
-
 export default {
   components: {
-    Login,
-    Signup
   },
   data() {
     return {
-      currentComponent: 'login',
     }
   },
   computed: {
     switchMessage() {
-      return (this.currentComponent === 'login') ?
-        'Нет аккаунта? <span>Создайте</span>' : 'Уже есть аккаунт? <span>Войти</span>'
+      switch (this.$nuxt.$route.name) {
+        case 'auth-Login':
+          return {
+            message: 'Нет аккаунта?',
+            path: {
+              text: 'Создайте',
+              link: '/auth/signup'
+            }
+          }
+          break
+        case 'auth-Signup':
+          return {
+            message: 'Уже есть аккаунт?',
+            path: {
+              text: 'Войти',
+              link: '/auth/login'
+            }
+          }
+          break
+      }
     },
     isAuth() {
       return this.$store.getters['user/isAuth']
     }
   },
   methods: {
-    switchComponent() {
-      this.currentComponent = (this.currentComponent === 'login') ? 'signup' : 'login' 
-    }
+
   },
 }
 </script>
