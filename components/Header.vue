@@ -1,9 +1,10 @@
 <template>
   <header>
     <div class="header main-container">
-      <a href="/">
+      <nuxt-link to="/" tag="a">
         <div class="logo"></div>
-      </a>
+      </nuxt-link>
+
       <nav>
         <!-- <ul class="header-menu">
           <li class="header-menu__item">
@@ -21,6 +22,7 @@
       </nav>
       <div>
         <template v-if="$store.getters['user/isAuth']">
+          <nuxt-link to="/upload" class="btn" tag="a">Добавить фото</nuxt-link>  
           <span>{{ $store.state.user.user.email }}</span>
           <button class="link" @click="signOut">Выйти</button>
         </template>
