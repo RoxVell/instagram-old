@@ -1,7 +1,7 @@
 <template>
   <section class="upload">
     <h1>Залей своё фото</h1>
-    <input type="file" accept=".jpg, .jpeg, .png" @change="selectFile($event)"> <br>
+    <input type="file" accept="image/*" @change="selectFile($event)"> <br>
     <img :src="previewImg" class="preview-img"> <br>
     <button class="btn" @click="uploadPhoto" v-if="currentFile">Залить фото</button>
     <progress :max="totalBytes" :value="bytesTransferred">

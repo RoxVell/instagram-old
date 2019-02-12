@@ -23,6 +23,7 @@ export const actions = {
   },
   async signInWithEmailAndPassword({ commit }, { email, password }) {
     let user = await auth.signInWithEmailAndPassword(email, password)
+    console.log(`Вроде вошёл`)
   },
   async signOut({ commit }) {
     try {
