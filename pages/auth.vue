@@ -5,7 +5,7 @@
       <nuxt-child></nuxt-child>
     </div>
 
-    <div class="auth-switch">
+    <div class="auth-switch" v-if="switchMessage">
       <p>
         {{ switchMessage.message }}
         <nuxt-link :to="switchMessage.path.link">{{ switchMessage.path.text }}</nuxt-link>
@@ -44,15 +44,15 @@ export default {
             }
           }
           break
+        case 'auth':
+          this.$nuxt.$router.push('/auth/login')
+          break
       }
     },
     isAuth() {
       return this.$store.getters['user/isAuth']
     }
-  },
-  methods: {
-
-  },
+  }
 }
 </script>
 

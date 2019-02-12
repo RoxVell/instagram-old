@@ -1,5 +1,9 @@
 @import './vars/colors';
 
+body {
+  background: #f6f6f6;
+}
+
 input {
   border: 1px solid #d1d5da;
   border-radius: 3px;
@@ -44,4 +48,10 @@ button.link {
 
 button:hover {
   text-decoration: underline;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-rows: 65px 1fr;
+  min-height: 100vh;
 }

@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <Header/>
-    <nuxt/>
+  <div class="wrapper">
+    <Header />
+    <nuxt />
   </div>
 </template>
 
@@ -18,4 +18,6 @@ export default {
 
 <style lang="scss">
 @import '~assets/scss/build.scss';
+
+
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <header>
-    <div class="header main-container">
+  <header class="header">
+    <div class="header container">
       <nuxt-link to="/" tag="a">
         <div class="logo"></div>
       </nuxt-link>
@@ -21,11 +21,17 @@
         </ul> -->
       </nav>
       <div>
+
         <template v-if="$store.getters['user/isAuth']">
-          <nuxt-link to="/upload" class="btn" tag="a">Добавить фото</nuxt-link>  
-          <span>{{ $store.state.user.user.email }}</span>
-          <button class="link" @click="signOut">Выйти</button>
+          <nuxt-link to="/upload" class="btn" tag="a">Добавить фото</nuxt-link>
+          <nuxt-link class="user-section" to="/profile">
+            <img class="user-avatar" :src="user.profile_picture" alt="User avatar">
+            <span>{{ user.username }}</span>
+          </nuxt-link>
+          
+          <!-- <button class="link" @click="signOut">Выйти</button> -->
         </template>
+
         <template v-else>
           <ul class="auth">
             <nuxt-link to="/auth/login" tag="a">
@@ -36,13 +42,23 @@
             </nuxt-link>
           </ul>
         </template>
+
       </div>
     </div>
   </header>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import User from '~/components/User'
+
 export default {
+  components: {
+    User
+  },
+  computed: mapState({
+    user: state => state.user.user
+  }),
   methods: {
     signOut() {
       this.$store.dispatch('user/signOut')

@@ -1,8 +1,9 @@
 <template>
-  <section class="upload">
+  <section class="upload container">
     <h1>Залей своё фото</h1>
-    <input type="file" accept=".jpg, .jpeg, .png" @change="selectFile($event)"> <br>
-    <img :src="previewImg" class="preview-img"> <br>
+    <input type="file" accept="image/*" @change="selectFile($event)"> <br>
+    <img :src="previewImg" class="preview-img" style="{width: 200px;}"> <br>
+    <textarea v-model="post.description" cols="30" rows="10"></textarea> <br>
     <button class="btn" @click="uploadPhoto" v-if="currentFile">Залить фото</button>
     <progress :max="totalBytes" :value="bytesTransferred">
       Загружено на <span id="value">{{ (bytesTransferred / totalBytes) * 100 }}</span>%
@@ -20,7 +21,10 @@ export default {
       previewImg: null,
       currentFile: null,
       totalBytes: 100,
-      bytesTransferred: 0
+      bytesTransferred: 0,
+      post: {
+        description: ''
+      }
     }
   },
   methods: {
@@ -35,21 +39,16 @@ export default {
     showPreviewImg(file) {
       this.previewImg = window.URL.createObjectURL(file)
     },
-    async uploadPhoto({ getters }, event) {
+    uploadPhoto({ getters }, event) {
       let photo = this.currentFile
 
-      this.totalBytes = photo.size
-
-      let fileRef = storage.ref(`photos/${photo.name}`)
-      let fileUpload = fileRef.put(photo)
-
-      fileUpload.on('state_changed', snapshot => {
-        this.bytesTransferred = snapshot.bytesTransferred
-      }, error => {
-        console.log('Произошла ошибка при загрузке файла', error)
-      }, () => {
-        // Успешная загрузка файла
-      })
+      this.$store.dispatch('user/addPost', { photo, description: this.post.description })
+        .then(() => {
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      
     }
   },
   computed: {
