@@ -11,6 +11,7 @@ input, button { outline: none; }
 
 ul { list-style-type: none; }
 
-section, header, footer {
-  padding: 0 50px;
+.container {
+  width: 93%;
+  margin: 0 auto;
 }

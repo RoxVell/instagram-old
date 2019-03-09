@@ -3,6 +3,7 @@ import 'firebase/storage'
 import 'firebase/database'
 import 'firebase/storage'
 import 'firebase/auth'
+import 'firebase/firestore'
 import config from './_configFirebase'
 
 if (!firebase.apps.length) {
@@ -10,6 +11,12 @@ if (!firebase.apps.length) {
 }
 
 export default firebase
-export let database = firebase.database()
-export let storage = firebase.storage()
-export let auth = firebase.auth()
+export const database = firebase.database()
+export const storage = firebase.storage()
+export const auth = firebase.auth()
+
+// Setting and export firestore
+const firestore = firebase.firestore()
+firestore.settings({ timestampsInSnapshots: true })
+
+export {firestore}

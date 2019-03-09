@@ -1,0 +1,19 @@
+.profile {
+  padding-top: 30px;
+}
+
+.profile-section {
+  display: flex;
+}
+
+.profile-section__avatar{
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-right: 50px;
+}
+
+.profile-section__username {
+  font-weight: 500;
+  font-size: 22px;
+}
