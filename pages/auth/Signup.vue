@@ -3,18 +3,23 @@
     <p class="form-title">Зарегистрируйтесь</p>
     <div class="form-element">
       <label class="required" for="signup-mail">E-mail</label>
-      <input id="signup-mail" type="email" v-model="email">
+      <input id="signup-mail" type="email" v-model="signupForm.email">
+    </div>
+
+    <div class="form-element">
+      <label class="required" for="signup-login">Имя пользователя</label>
+      <input id="signup-login" v-model="signupForm.username">
     </div>
     
     <div class="form-element">
       <label class="required" for="signup-password">Пароль</label>
-      <input id="signup-password" type="password" v-model="password">
+      <input id="signup-password" type="password" v-model="signupForm.password">
       <p class="form-element__desc">Пароль должен содержать не менее 8 символов</p>
     </div>
 
     <div class="form-element">
       <label class="required" for="signup-password-repeat">Подтвердите пароль</label>
-      <input id="signup-password-repeat" type="password" v-model="repeatPassword">
+      <input id="signup-password-repeat" type="password" v-model="signupForm.repeatPassword">
     </div>
    
     <div class="form-element">
@@ -32,18 +37,28 @@
 export default {
   data() {
     return {
-      email: '',
-      password: '',
-      repeatPassword: ''
+      signupForm: {
+        email: 'anton1.a@mail.ru',
+        password: 'osechkin.a',
+        repeatPassword: 'osechkin.a',
+        username: 'RoxVell'
+      }
     }
   },
   methods: {
     createUserWithEmailAndPassword() {
       if (!this.isValidUser) return
-      
+
+      const { email, username, password } = this.signupForm
+
       this.$store.dispatch('user/createUserWithEmailAndPassword', {
-        email: this.email,
-        password: this.password
+        email,
+        username,
+        password
+      }).then(response => {
+        this.$router.push({
+          path: '/'
+        })
       })
     },
     isValidUser() {
