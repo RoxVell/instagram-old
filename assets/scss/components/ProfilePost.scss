@@ -1,0 +1,49 @@
+.post {
+  position: relative;
+  display: flex;
+}
+
+.post:hover .post-stats {
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.post-stats {
+  position: absolute;
+  color: white;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+}
+
+.post-stats li {
+  display: flex;
+  align-items: center;
+}
+
+.post-stats li:not(:last-child) {
+  margin-right: 20px;
+}
+
+.post-stats__icon {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin-right: 7px;
+}
+
+.icon-like {
+  background: url('~static/images/icons/like.svg');
+  background-size: cover;
+}
+
+.icon-comments {
+  background: url('~static/images/icons/comment.svg');
+  background-size: cover;
+}
+

@@ -1,42 +1,89 @@
 <template>
-  <div class="profile container">
+  <div class="profile container" :class="{ edit: editMode }">
+
     <div class="profile-section">
       <img :src="user.profile_picture" class="profile-section__avatar" alt="User Avatar">
+
       <div class="profile-section__user-info">
-        <h2 class="profile-section__username">{{ user.username }}</h2>
-        <p>{{ user.posts.length }} постов</p>
-        <p>{{ user.subscribers.length }} подписчиков</p>
+
+        <div class="profile-settings">
+          <h2 class="profile-section__username">{{ user.username }}</h2>
+
+          <button
+            class="btn btn-edit"
+            @click="switchEditMode">
+            {{ editMode ? "Сохранить" : "Редактировать профиль" }}
+          </button>
+          
+          <button class="btn" @click="signOut">Выйти</button>
+        </div>
+
+        <div>
+          <ul class="profile-stats">
+            <li><span class="profile-stats__count">{{ user.posts.length }}</span> публикаций</li>
+            <li><span class="profile-stats__count">{{ user.subscribers.length }}</span> подписчиков</li>
+            <li><span class="profile-stats__count">0</span> подписки</li>
+          </ul>
+        </div>
+
+        <div v-if="user.profile_description" class="profile-description">
+          <textarea
+            :readonly="editMode" class="default" style="width: 100%;" v-model="user.profile_description">
+          </textarea>
+          <!-- <p>{{ user.profile_description }}</p> -->
+        </div>
       </div>
       
     </div>
+
     <div class="posts-section">
-      <div class="post" v-for="(post, index) in posts" :key="index">
-        <img :src="post.content">
-      </div>
+      <ProfilePost class="post" v-for="(post, index) in posts" :key="index" :post="post"/>
     </div>
+
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import ProfilePost from '~/components/ProfilePost'
 
 export default {
   middleware: 'authenticated',
+  components: {
+    ProfilePost
+  },
   data() {
     return {
-      posts: []
+      posts: [],
+      editMode: false
     }
   },
   methods: {
+    switchEditMode() {
+      if (this.editMode) {
+        this.saveProfileSettings()
+      }
+      else {
+        this.editMode = true
+      }
+    },
+    saveProfileSettings() {
+      console.log(`Сохранить настройки`)
+      this.editMode = false
+    },
     signOut() {
-      this.$store.dispatch('user/signOut').then(console.log).catch(console.log)
+      this.$store.dispatch('user/signOut')
+        .then(() => {
+          this.$router.replace('/')
+        })
+        .catch(console.log)
     }
   },
   computed: mapState({
     user: state => state.user.user
   }),
   created() {
-    this.$store.dispatch('user/getPosts')
+    this.$store.dispatch('user/getMyPosts')
       .then(posts => {
         this.posts = posts
       })
@@ -48,14 +95,6 @@ export default {
 <style lang="scss">
 @import '~/assets/scss/components/profile.scss';
 
-.posts-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 20px;
-}
 
-.post img {
-  max-width: 30vw;
-}
 </style>
 
