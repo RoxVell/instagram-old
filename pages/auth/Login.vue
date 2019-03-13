@@ -10,13 +10,13 @@
     
     <div class="form-element">
       <label for="login-password" >Пароль</label>
-      <input id="login-password" type="password" v-model="password">
+      <input id="login-password" type="password" v-model="password" @keyup.enter="signInWithEmailAndPassword">
       <p class="form-element__desc">Пароль должен содержать не менее 8 символов</p>
       <p class="form-element__desc form-element__error">{{ passwordErorr }}</p>
     </div>
 
     <div class="form-element">
-      <button class="btn btn-primary" @keyup.enter="signInWithEmailAndPassword" @click="signInWithEmailAndPassword">Войти</button>
+      <button class="btn btn-primary" @click="signInWithEmailAndPassword">Войти</button>
     </div>
   </div>
 </template>
@@ -41,7 +41,6 @@ export default {
       .catch(this.authFailed)
     },
     authSuccess(...args) {
-      console.log(args)
       this.$nuxt.$router.push('/')
     },
     authFailed(error) {

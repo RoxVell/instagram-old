@@ -1,9 +1,11 @@
 .profile {
-  padding-top: 30px;
+  padding: 40px 0;
 }
 
 .profile-section {
   display: flex;
+  margin-bottom: 50px;
+  padding-left: 50px;
 }
 
 .profile-section__avatar{
@@ -13,7 +15,73 @@
   margin-right: 50px;
 }
 
+.profile-section__avatar:hover {
+  background: rgba(0, 0, 0, .3);
+}
+
 .profile-section__username {
   font-weight: 500;
   font-size: 22px;
+}
+
+.posts-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 20px;
+}
+
+.post {
+  width: 20vw;
+  height: 20vw;
+}
+
+.post img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-section__user-info div {
+  margin-top: 20px;
+}
+
+.profile-stats {
+  display: flex;
+}
+
+.profile-stats > li:not(:last-child) {
+  margin-right: 35px;
+}
+
+.profile-stats__count {
+  font-weight: 500;
+}
+
+.profile-settings {
+  display: flex;
+}
+
+.profile-settings button.btn {
+  padding: 5px 15px;
+  font-size: 14px;
+}
+
+.profile-settings > *:not(:first-child) {
+  margin-left: 25px;
+}
+
+.profile-description textarea.default {
+  background: none;
+  border: none;
+  resize: none;
+}
+
+.profile.edit button.btn-edit {
+  background: #68be77;
+  color: white;
+}
+
+.profile.edit textarea {
+  resize: both;
+  // background: blue;
 }

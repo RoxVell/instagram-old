@@ -1,3 +1,7 @@
+// import * as firebase from '~/firebase/init'
+
+// const { auth, database, storage, firestore } = firebase
+
 import { auth, database, storage, firestore } from '~/firebase/init'
 import firebase from '~/firebase/init'
 
@@ -13,9 +17,10 @@ export const mutations = {
     if (!auth.currentUser) {
       state.user = null
     } else {
-      const userDoc = firestore.collection('users').doc(auth.currentUser.uid)
-
-      userDoc.get()
+      const userDoc = firestore
+        .collection('users')
+        .doc(auth.currentUser.uid)
+        .get()
         .then(doc => {
           if (doc.exists) {
             state.user = doc.data()
@@ -41,7 +46,9 @@ export const actions = {
         username,
         profile_picture: defaultAvatar,
         posts: [],
-        subscribers: []
+        subscribers: [],
+        created_at: firebase.firestore.Timestamp.now(),
+        profile_description: ""
       }
 
       await firestore.collection('users').doc(user.uid).set(newUser)
@@ -61,18 +68,20 @@ export const actions = {
   },
   async addPost({ state, dispatch, commit }, { photo, description='' }) {
     try {
-      if (!state.user) throw Error('User not logged in')
-
       const photoURL = await dispatch('uploadPhoto', photo)
+
       const newPost = {
         userId: auth.currentUser.uid,
         content: photoURL,
         description,
         likes: 0,
-        comments: []
+        comments: [],
+        created_date: firebase.firestore.Timestamp.now()
       }
 
-      const postReference = await firestore.collection('posts').add(newPost)
+      const postReference = await firestore
+        .collection('posts')
+        .add(newPost)
 
       firestore
         .collection('users')
@@ -88,13 +97,16 @@ export const actions = {
   },
   async uploadPhoto({ state }, photo) {
     return new Promise((resolve, reject) => {
-      const photoName = `${state.user.username}-${photo.name}`
-      const photoReference = storage.ref(`photos/${photoName}`)
+      const dateCreated = firebase.firestore.Timestamp.now().seconds
+      const photoName = `${state.user.username}-${dateCreated}`
+
+      // reference -> photos / username / photoName
+      const photoReference = storage.ref(`photos/${state.user.username}/${photoName}`)
 
       const uploadTask = photoReference.put(photo)
 
-      uploadTask.on('state_changed', () => {}, error => reject(error), () => {
-        console.log(`Файл ${photoName} пользователя ${auth.currentUser.uid} успешно загружен`)
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, () => {}, error => reject(error), () => {
+        console.log(`Файл ${photoName} пользователя ${state.user.username} успешно загружен`)
 
         uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
           resolve(downloadURL)
@@ -102,18 +114,38 @@ export const actions = {
      })
     })
   },
-  async getPosts({ state, dispatch }) {
+  async getMyPosts({ state, dispatch }, limit=15) {
+    if (!Number.isInteger(limit)) {
+      console.error("The limit parameter must be an integer")
+      limit = 15
+    }
+
     let photos = []
 
-    state.user.posts.forEach(async post => {
+    for (let i = 0; i < limit; i++) {
+      let postID = state.user.posts[i]
+
+      if (!postID) break
+
       let photo = await firestore
         .collection('posts')
-        .doc(post)
+        .doc(postID)
         .get()
 
       photos.push(photo.data())
-    })
+    }
 
+    photos = photos.filter(photo => Boolean(photo))
+
+    // state.user.posts.forEach(async post => {
+    //   let photo = await firestore
+    //     .collection('posts')
+    //     .doc(post)
+    //     .get()
+
+    //   photos.push(photo.data())
+    // })
+    console.log(photos)
     return photos
   },
   async getPostsByUID({}) {
