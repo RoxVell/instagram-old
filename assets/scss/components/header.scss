@@ -59,3 +59,12 @@ ul.auth {
 .user-section .user-avatar {
   margin-right: 10px;
 }
+
+.header-auth {
+  display: flex;
+  align-items: center;
+}
+
+.header-auth a:not(:last-child) {
+  margin-right: 22px;
+}
