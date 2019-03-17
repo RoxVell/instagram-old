@@ -8,7 +8,8 @@
 
     <div class="form-element">
       <label class="required" for="signup-login">Имя пользователя</label>
-      <input id="signup-login" v-model="signupForm.username">
+      <input id="signup-login" v-model.trim="signupForm.username" @change="checkUsername" @input="usernameToLowerCase">
+      <p class="form-element__desc form-element__error">{{ usernameError }}</p>
     </div>
     
     <div class="form-element">
@@ -42,10 +43,29 @@ export default {
         password: '',
         repeatPassword: '',
         username: ''
-      }
+      },
+      usernameError: ''
     }
   },
   methods: {
+    usernameToLowerCase(e) {
+      let username = e.target.value
+      this.signupForm.username = username.toLowerCase()
+    },
+    checkUsername(e) {
+      this.usernameError = ''
+
+      let username = e.target.value
+
+      this.$store.dispatch('user/checkUsername', username)
+        .then(response => {
+          if (!response) {
+            this.usernameError = `Никнейм ${username} занят`
+          }
+        })
+        .catch()
+
+    },
     createUserWithEmailAndPassword() {
       if (!this.isValidUser) return
 
@@ -55,11 +75,17 @@ export default {
         email,
         username,
         password
-      }).then(response => {
-        this.$router.push({
-          path: '/'
-        })
       })
+      .then(this.signupSucces)
+      .catch(this.signupFailed)
+    },
+    signupSucces(user) {
+      this.$router.push({
+        path: '/'
+      })
+    },
+    signupFailed(error) {
+      console.log(error);
     },
     isValidUser() {
       return (this.password === this.repeatPassword)

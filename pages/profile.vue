@@ -28,9 +28,8 @@
 
         <div v-if="user.profile_description" class="profile-description">
           <textarea
-            :readonly="editMode" class="default" style="width: 100%;" v-model="user.profile_description">
+            :readonly="!editMode" class="default" style="width: 100%;" v-model="user.profile_description">
           </textarea>
-          <!-- <p>{{ user.profile_description }}</p> -->
         </div>
       </div>
       

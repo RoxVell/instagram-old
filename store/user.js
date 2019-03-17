@@ -1,7 +1,3 @@
-// import * as firebase from '~/firebase/init'
-
-// const { auth, database, storage, firestore } = firebase
-
 import { auth, database, storage, firestore } from '~/firebase/init'
 import firebase from '~/firebase/init'
 
@@ -17,6 +13,8 @@ export const mutations = {
     if (!auth.currentUser) {
       state.user = null
     } else {
+      state.user = {}
+
       const userDoc = firestore
         .collection('users')
         .doc(auth.currentUser.uid)
@@ -35,8 +33,14 @@ export const mutations = {
 }
 
 export const actions = {
-  async createUserWithEmailAndPassword({ commit }, { email, username, password }) {
+  async createUserWithEmailAndPassword({ commit, dispatch }, { email, username, password }) {
     try {
+      username = username.toLowerCase()
+
+      const isUsernameAvailable = await dispatch('checkUsername', username)
+
+      if (!isUsernameAvailable) throw Error(`${username} has been taken!`)
+
       let { user } = await auth.createUserWithEmailAndPassword(email, password)
 
       const defaultAvatar = await storage.ref('photos/avatar_default.png').getDownloadURL()
@@ -72,7 +76,7 @@ export const actions = {
 
       const newPost = {
         userId: auth.currentUser.uid,
-        content: photoURL,
+        content: [photoURL],
         description,
         likes: 0,
         comments: [],
@@ -135,18 +139,24 @@ export const actions = {
       photos.push(photo.data())
     }
 
-    photos = photos.filter(photo => Boolean(photo))
+    photos = photos
+      .filter(photo => Boolean(photo))
+      .sort((a, b) => b.created_date.seconds - a.created_date.seconds)
 
-    // state.user.posts.forEach(async post => {
-    //   let photo = await firestore
-    //     .collection('posts')
-    //     .doc(post)
-    //     .get()
-
-    //   photos.push(photo.data())
-    // })
-    console.log(photos)
     return photos
+  },
+  async checkUsername({ state }, username) {
+    try {
+      let docs = await firestore
+        .collection('users')
+        .where('username', '==', username)
+        .get()
+
+      return (docs.size === 0)
+    } catch(error) {
+      console.log(error)
+      throw Error(error)
+    }
   },
   async getPostsByUID({}) {
     let posts = []
