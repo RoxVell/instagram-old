@@ -1,5 +1,7 @@
 import { auth, database, storage, firestore } from '~/firebase/init'
 import firebase from '~/firebase/init'
+import User from '../models/User'
+import Post from '../models/Post'
 
 const photosRef = storage.ref('photos/')
 const databaseRef = database.ref()
@@ -45,15 +47,7 @@ export const actions = {
 
       const defaultAvatar = await storage.ref('photos/avatar_default.png').getDownloadURL()
 
-      const newUser = {
-        email,
-        username,
-        profile_picture: defaultAvatar,
-        posts: [],
-        subscribers: [],
-        created_at: firebase.firestore.Timestamp.now(),
-        profile_description: ""
-      }
+      const newUser = User({ email, username, avatar: defaultAvatar })
 
       await firestore.collection('users').doc(user.uid).set(newUser)
     } catch(error) {
@@ -74,14 +68,7 @@ export const actions = {
     try {
       const photoURL = await dispatch('uploadPhoto', photo)
 
-      const newPost = {
-        userId: auth.currentUser.uid,
-        content: [photoURL],
-        description,
-        likes: 0,
-        comments: [],
-        created_date: firebase.firestore.Timestamp.now()
-      }
+      const newPost = Post({ userId: auth.currentUser.uid, content: [photoURL], description })
 
       const postReference = await firestore
         .collection('posts')
