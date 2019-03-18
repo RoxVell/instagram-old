@@ -7,16 +7,16 @@ const photosRef = storage.ref('photos/')
 const databaseRef = database.ref()
 
 export const state = () => ({
-  user: null
+  user: null,
+  isLoading: 'loading'
 })
 
 export const mutations = {
   UPDATE_USER(state) {
     if (!auth.currentUser) {
       state.user = null
+      state.isLoading = 'not-auth' + Math.random()
     } else {
-      state.user = {}
-
       const userDoc = firestore
         .collection('users')
         .doc(auth.currentUser.uid)
@@ -24,7 +24,11 @@ export const mutations = {
         .then(doc => {
           if (doc.exists) {
             state.user = doc.data()
+            state.isLoading = false
+          } else {
+            state.isLoading = 'user-not-exist'
           }
+
         })
         .catch(console.log)
     }

@@ -47,7 +47,6 @@ import { mapState } from 'vuex'
 import ProfilePost from '~/components/ProfilePost'
 
 export default {
-  middleware: 'authenticated',
   components: {
     ProfilePost
   },
@@ -93,7 +92,5 @@ export default {
 
 <style lang="scss">
 @import '~/assets/scss/components/profile.scss';
-
-
 </style>
 

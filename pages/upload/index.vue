@@ -15,7 +15,6 @@
 import { storage } from '~/firebase/init'
 
 export default {
-  middleware: 'authenticated',
   data() {
     return {
       previewImg: null,
