@@ -6,6 +6,8 @@
       </nuxt-link>
 
     
+      <Search />
+
       <div class="header-auth">
 
         <template v-if="$store.getters['user/isAuth']">
@@ -38,10 +40,12 @@
 <script>
 import { mapState } from 'vuex'
 import User from '~/components/User'
+import Search from '~/components/Search'
 
 export default {
   components: {
-    User
+    User,
+    Search
   },
   computed: mapState({
     user: state => state.user.user

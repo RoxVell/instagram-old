@@ -1,0 +1,15 @@
+input.input-search,
+input.input-loading {
+  background-repeat: no-repeat;
+  background-size: 15px;
+  background-position-y: 50%;
+  background-position-x: calc(100% - 10px);
+}
+
+input.input-search {
+  background-image: url('~static/images/icons/search.svg');
+}
+
+input.input-loading {
+  background-image: url('~static/images/icons/spinner.svg');
+}
