@@ -71,21 +71,22 @@ export const actions = {
   async addPost({ state, dispatch, commit }, { photo, description='' }) {
     try {
       const photoURL = await dispatch('uploadPhoto', photo)
-
       const newPost = Post({ userId: auth.currentUser.uid, content: [photoURL], description })
 
       const postReference = await firestore
         .collection('posts')
         .add(newPost)
 
+      const postReferenceId = firestore.doc(`posts/${postReference.id}`)
+
       firestore
         .collection('users')
         .doc(auth.currentUser.uid)
         .update({
-          posts: firebase.firestore.FieldValue.arrayUnion(postReference.id)
+          posts: firebase.firestore.FieldValue.arrayUnion(postReferenceId)
         })
 
-      commit('ADD_POST', postReference.id)
+      commit('ADD_POST', postReferenceId)
     } catch(error) {
       throw new Error(error)
     }
@@ -118,14 +119,13 @@ export const actions = {
     let photos = []
 
     for (let i = 0; i < limit; i++) {
-      let postID = state.user.posts[i]
+      let postRef = state.user.posts[i]
 
-      if (!postID) break
+      if (!postRef) break
 
-      let photo = await firestore
-        .collection('posts')
-        .doc(postID)
-        .get()
+      console.log(postRef)
+
+      const photo = await postRef.get()
 
       photos.push(photo.data())
     }

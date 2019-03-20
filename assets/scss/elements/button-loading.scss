@@ -1,0 +1,8 @@
+.btn-loading {
+  background-image: url('~static/images/icons/spinner.svg');
+  background-repeat: no-repeat;
+  background-size: 25px;
+  background-position-y: 50%;
+  background-position-x: calc(100% - 10px);
+  transform: scale(1.2);
+}

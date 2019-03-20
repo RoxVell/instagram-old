@@ -1,18 +1,14 @@
 <template>
   <div class="search-component">
     <input type="text" :class="[ loading ? 'input-loading': 'input-search' ]">
-    <div class="suggestions">
-      <a class="suggestions-item" href="#">
-        <span class="suggestions-item__title">Some</span>
-        <span class="suggestions-item__desc">Some lionger</span>
-      </a>
-      <a class="suggestions-item" href="#">
-        <span class="suggestions-item__title">Some</span>
-        <span class="suggestions-item__desc">Some lionger</span>
-      </a>
-      <a class="suggestions-item" href="#">
-        <span class="suggestions-item__title">Some</span>
-        <span class="suggestions-item__desc">Some lionger</span>
+    <div class="suggestions" v-if="suggestions.length !== 0">
+      <a
+        class="suggestions-item"
+        v-for="(suggestion, index) in suggestions"
+        :href="suggestion.link"
+        :key="index">
+        <span class="suggestions-item__title">{{ suggestion.title }}</span>
+        <span class="suggestions-item__desc">{{ suggestion.desc }}</span>
       </a>
     </div>
   </div>
@@ -23,7 +19,7 @@ export default {
   props: {
     suggestions: {
       type: Array,
-      required: true
+      default: () => []
     },
     loading: {
       type: Boolean,

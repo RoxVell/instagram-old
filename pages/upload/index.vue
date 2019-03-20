@@ -1,13 +1,35 @@
 <template>
-  <section class="upload container">
-    <h1>Залей своё фото</h1>
-    <input type="file" accept="image/*" @change="selectFile($event)"> <br>
+  <section class="upload-page container">
+    <div class="upload-elements">
+      <div class="upload-formats">
+        <div class="format">
+          <span class="format-icon format-icon__photo"></span>
+          <div class="format-info">
+            <span class="format-title">High resolution images</span>
+            <span class="format-desc">PNG, JPG, GIF up to 10MB</span>
+          </div>
+        </div>
+        <div class="format">
+          <span class="format-icon format-icon__video"></span>
+          <div class="format-info">
+            <span class="format-title">Video</span>
+           <span class="format-desc">MP4 or WEBM, 4:3, 24 sec</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-section">
+        <input id="file" class="upload-media" type="file" accept="image/*" @change="selectFile($event)">
+        <label class="upload-button" for="file">Загрузить</label>
+      </div>
+
+      
+    </div>
+
+
     <img :src="previewImg" class="preview-img" style="{width: 200px;}"> <br>
     <textarea v-model="post.description" cols="30" rows="10"></textarea> <br>
     <button class="btn" @click="uploadPhoto" v-if="currentFile">Залить фото</button>
-    <progress :max="totalBytes" :value="bytesTransferred">
-      Загружено на <span id="value">{{ (bytesTransferred / totalBytes) * 100 }}</span>%
-    </progress>
   </section>
 </template>
 
@@ -63,8 +85,6 @@ export default {
 }
 </script>
 
-<style>
-.preview-img {
-  width: 500px;
-}
+<style lang="scss">
+@import '~assets/scss/components/uploadPage.scss';
 </style>

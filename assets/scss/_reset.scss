@@ -5,6 +5,7 @@ body, input, button, textarea {
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 input, button { outline: none; }
@@ -14,4 +15,16 @@ ul { list-style-type: none; }
 .container {
   width: 1000px;
   margin: 0 auto;
+}
+
+@media screen and (max-width: 1018px) {
+  .container {
+    width: 850px;
+  }
+}
+
+@media screen and (max-width: 866px) {
+  .container {
+    width: 100%;
+  }
 }

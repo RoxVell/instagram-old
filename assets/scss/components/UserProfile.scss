@@ -1,6 +1,3 @@
-.profile {
-  padding: 40px 0;
-}
 
 .profile-section {
   display: flex;
@@ -20,30 +17,6 @@
   font-size: 22px;
 }
 
-.posts-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 20px;
-}
-
-@media screen and (max-width: 866px) {
-  .posts-section {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media screen and (max-width: 450px) {
-  .posts-section {
-    // padding: 30px;
-    grid-template-columns: 1fr;
-  }
-}
-
-.post img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 .profile-section__user-info div {
   margin-top: 20px;
@@ -68,6 +41,7 @@
 .profile-settings button.btn {
   padding: 5px 15px;
   font-size: 14px;
+  transition: all .3s;
 }
 
 .profile-settings > *:not(:first-child) {

@@ -1,0 +1,105 @@
+.upload-page {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.upload-elements {
+  width: 100%;
+  height: 500px;
+  padding: 30px;
+  border: 2px dashed #cdcdcd;
+  box-sizing: border-box;
+}
+
+.format-icon__photo,
+.format-icon__video {
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.format-icon__photo {
+  background-image: url('~static/images/icons/camera.svg');
+}
+
+.format-icon__video {
+  background-image: url('~static/images/icons/video.svg');
+}
+
+.upload-formats {
+  display: flex;
+  justify-content: center;
+
+  .format {
+    display: flex;
+    align-items: stretch;
+
+    &:not(:last-child) {
+      margin-right: 50px;
+    }
+  }
+
+  .format-icon {
+    display: block;
+    width: 65px;
+    height: 35px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #b8b8b8;
+    background-size: 30px;
+  }
+
+  .format-info {
+    display: flex;
+    flex-direction: column;
+
+    .format-title {
+      font-weight: 500;
+      color: #1e1e1e;
+      margin-bottom: 3px;
+    }
+
+    .format-desc {
+      font-size: 14px;
+      color: #838383;
+    }
+  }
+}
+
+.upload-section {
+  display: flex;
+  height: inherit;
+  align-items: center;
+}
+
+.upload-media {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.upload-media + .upload-button {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  background-color: black;
+  display: inline-block;
+}
+
+.upload-media + .upload-button {
+  cursor: pointer;
+}
+
+.upload-media :focus + label,
+.upload-media + label:hover {
+  background-color: red;
+}
+
+.upload-button {
+  padding: 20px;
+}
+
+

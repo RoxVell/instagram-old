@@ -1,5 +1,5 @@
 <template>
-  <div class="profile container" :class="{ edit: editMode }">
+  <section class="profile container" :class="{ edit: editMode }">
 
     <div class="profile-section">
       <img :src="user.profile_picture" class="profile-section__avatar" alt="User Avatar">
@@ -20,7 +20,7 @@
 
         <div>
           <ul class="profile-stats">
-            <li><span class="profile-stats__count">{{ user.posts.length }}</span> публикаций</li>
+            <li><span class="profile-stats__count">{{ user.posts }}</span> публикаций</li>
             <li><span class="profile-stats__count">{{ user.subscribers.length }}</span> подписчиков</li>
             <li><span class="profile-stats__count">0</span> подписки</li>
           </ul>
@@ -35,20 +35,26 @@
       
     </div>
 
-    <div class="posts-section">
-      <ProfilePost class="post" v-for="(post, index) in posts" :key="index" :post="post"/>
-    </div>
+    <Gallery class="posts-section">
+      <ProfilePost class="gallery-item" v-for="(post, index) in posts" :key="index" :post="post"/>
+    </Gallery>
 
-  </div>
+    <!-- <div class="posts-section">
+      <ProfilePost class="post" v-for="(post, index) in posts" :key="index" :post="post"/>
+    </div> -->
+
+  </section>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import ProfilePost from '~/components/ProfilePost'
+import Gallery from '~/components/Gallery'
 
 export default {
   components: {
-    ProfilePost
+    ProfilePost,
+    Gallery
   },
   data() {
     return {
@@ -56,7 +62,18 @@ export default {
       editMode: false
     }
   },
+  watch: {
+    user(updatedUser) {
+      if (updatedUser.posts.length !== this.user.posts.length) this.getPosts()
+    }
+  },
   methods: {
+    getPosts() {
+      this.$store.dispatch('user/getMyPosts')
+        .then(posts => {
+          this.posts = posts
+        })
+    },
     switchEditMode() {
       if (this.editMode) {
         this.saveProfileSettings()
@@ -81,10 +98,7 @@ export default {
     user: state => state.user.user
   }),
   created() {
-    this.$store.dispatch('user/getMyPosts')
-      .then(posts => {
-        this.posts = posts
-      })
+    this.getPosts()
   }
 }
 </script>
