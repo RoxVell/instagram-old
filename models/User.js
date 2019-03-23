@@ -5,7 +5,7 @@ const User = function({ username, email, avatar }) {
     email,
     username,
     profile_picture: avatar,
-    posts: [],
+    posts: 0,
     subscribers: [],
     created_at: firebase.firestore.Timestamp.now(),
     profile_description: '',

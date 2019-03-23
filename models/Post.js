@@ -1,8 +1,8 @@
 import firebase from '~/firebase/init'
 
-const Post = function({ userId, description, content }) {
+const Post = function({ username, description, content }) {
   return {
-    userId,
+    username,
     content,
     description,
     likes: 0,

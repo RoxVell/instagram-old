@@ -1,47 +1,11 @@
 <template>
-  <section class="profile container" :class="{ edit: editMode }">
+  <section class="profile container">
 
-    <div class="profile-section">
-      <img :src="user.profile_picture" class="profile-section__avatar" alt="User Avatar">
-
-      <div class="profile-section__user-info">
-
-        <div class="profile-settings">
-          <h2 class="profile-section__username">{{ user.username }}</h2>
-
-          <button
-            class="btn btn-edit"
-            @click="switchEditMode">
-            {{ editMode ? "Сохранить" : "Редактировать профиль" }}
-          </button>
-          
-          <button class="btn" @click="signOut">Выйти</button>
-        </div>
-
-        <div>
-          <ul class="profile-stats">
-            <li><span class="profile-stats__count">{{ user.posts }}</span> публикаций</li>
-            <li><span class="profile-stats__count">{{ user.subscribers.length }}</span> подписчиков</li>
-            <li><span class="profile-stats__count">0</span> подписки</li>
-          </ul>
-        </div>
-
-        <div v-if="user.profile_description" class="profile-description">
-          <textarea
-            :readonly="!editMode" class="default" style="width: 100%;" v-model="user.profile_description">
-          </textarea>
-        </div>
-      </div>
-      
-    </div>
+    <AuthUserProfile :user="user"/>
 
     <Gallery class="posts-section">
       <ProfilePost class="gallery-item" v-for="(post, index) in posts" :key="index" :post="post"/>
     </Gallery>
-
-    <!-- <div class="posts-section">
-      <ProfilePost class="post" v-for="(post, index) in posts" :key="index" :post="post"/>
-    </div> -->
 
   </section>
 </template>
@@ -50,48 +14,58 @@
 import { mapState } from 'vuex'
 import ProfilePost from '~/components/ProfilePost'
 import Gallery from '~/components/Gallery'
+import AuthUserProfile from '~/components/UserProfile/Auth'
+import { debounce } from '~/utils/index'
 
 export default {
   components: {
+    AuthUserProfile,
     ProfilePost,
-    Gallery
+    Gallery,
   },
   data() {
     return {
       posts: [],
-      editMode: false
+      loading: false,
+      isPostsLoaded: false
     }
   },
   watch: {
     user(updatedUser) {
       if (updatedUser.posts.length !== this.user.posts.length) this.getPosts()
+    },
+    posts(newPosts) {
+      this.isPostsLoaded = (newPosts.length >= this.user.posts)
+    },
+    isPostsLoaded(value) {
+      if (value) document.onscroll = null
     }
   },
   methods: {
-    getPosts() {
-      this.$store.dispatch('user/getMyPosts')
-        .then(posts => {
-          this.posts = posts
-        })
-    },
-    switchEditMode() {
-      if (this.editMode) {
-        this.saveProfileSettings()
+    async getPosts() {
+      this.loading = true
+
+      try {
+        const lastDate = (this.posts.length !== 0) ? this.posts[this.posts.length - 1].created_date : null
+        const newPosts = await this.$store.dispatch('user/getMyPosts', { fromDate: lastDate })
+        this.posts.push(...newPosts)
+      } catch(error) {
+        console.log(error)
       }
-      else {
-        this.editMode = true
+
+      this.loading = false
+    },
+    scrollEvent(e) {
+      const HEIGHT_HANDLER = 500
+      const currentScroll = window.innerHeight + window.scrollY
+      const fullScroll = document.body.offsetHeight
+
+      const isHandlable = (fullScroll - currentScroll <= HEIGHT_HANDLER)
+
+      if (isHandlable && !this.loading && !this.isPostsLoaded) {
+        this.getPosts()
+        console.log('HANDLE_IT')
       }
-    },
-    saveProfileSettings() {
-      console.log(`Сохранить настройки`)
-      this.editMode = false
-    },
-    signOut() {
-      this.$store.dispatch('user/signOut')
-        .then(() => {
-          this.$router.replace('/')
-        })
-        .catch(console.log)
     }
   },
   computed: mapState({
@@ -99,6 +73,7 @@ export default {
   }),
   created() {
     this.getPosts()
+    document.onscroll = debounce(this.scrollEvent, 200)
   }
 }
 </script>
