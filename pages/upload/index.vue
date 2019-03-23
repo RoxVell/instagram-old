@@ -27,7 +27,7 @@
     </div>
 
 
-    <img :src="previewImg" class="preview-img" style="{width: 200px;}"> <br>
+    <!-- <img :src="previewImg" class="preview-img" style="{width: 200px;}"> <br> -->
     <textarea v-model="post.description" cols="30" rows="10"></textarea> <br>
     <button class="btn" @click="uploadPhoto" v-if="currentFile">Залить фото</button>
   </section>

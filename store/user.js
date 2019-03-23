@@ -33,8 +33,8 @@ export const mutations = {
         .catch(console.log)
     }
   },
-  ADD_POST(state, id) {
-    state.user.posts.push(id)
+  ADD_POST(state) {
+    state.user.posts += 1
   }
 }
 
@@ -71,22 +71,25 @@ export const actions = {
   async addPost({ state, dispatch, commit }, { photo, description='' }) {
     try {
       const photoURL = await dispatch('uploadPhoto', photo)
-      const newPost = Post({ userId: auth.currentUser.uid, content: [photoURL], description })
+
+      const newPost = Post({
+        username: state.user.username,
+        content: [photoURL],
+        description
+      })
 
       const postReference = await firestore
         .collection('posts')
         .add(newPost)
 
-      const postReferenceId = firestore.doc(`posts/${postReference.id}`)
-
       firestore
         .collection('users')
         .doc(auth.currentUser.uid)
         .update({
-          posts: firebase.firestore.FieldValue.arrayUnion(postReferenceId)
+          posts: state.user.posts + 1
         })
 
-      commit('ADD_POST', postReferenceId)
+      commit('ADD_POST')
     } catch(error) {
       throw new Error(error)
     }
@@ -110,31 +113,8 @@ export const actions = {
      })
     })
   },
-  async getMyPosts({ state, dispatch }, limit=15) {
-    if (!Number.isInteger(limit)) {
-      console.error("The limit parameter must be an integer")
-      limit = 15
-    }
-
-    let photos = []
-
-    for (let i = 0; i < limit; i++) {
-      let postRef = state.user.posts[i]
-
-      if (!postRef) break
-
-      console.log(postRef)
-
-      const photo = await postRef.get()
-
-      photos.push(photo.data())
-    }
-
-    photos = photos
-      .filter(photo => Boolean(photo))
-      .sort((a, b) => b.created_date.seconds - a.created_date.seconds)
-
-    return photos
+  async getMyPosts({ state, dispatch }, { limit=15, fromDate }) {
+    return await dispatch('getPostsByUsername', { username: state.user.username, limit, fromDate })
   },
   async checkUsername({ state }, username) {
     try {
@@ -149,16 +129,25 @@ export const actions = {
       throw Error(error)
     }
   },
-  async getPostsByUID({}) {
-    let posts = []
+  async getPostsByUsername({}, { username, fromDate, limit = 15, }) {
+    const PERFOMANCE_MESSAGE = `Getting posts for username: ${username}`
+    console.time(PERFOMANCE_MESSAGE)
 
-    await firestore
+    const posts = []
+
+    let query = firestore
       .collection('posts')
-      .where("userId", "==", auth.currentUser.uid)
-      .get()
-      .then(querySnapchot => {
-        querySnapchot.forEach(doc => posts.push(doc.data()))
-      })
+      .where('username', '==', username)
+      .limit(limit)
+      .orderBy('created_date', 'desc')
+
+    if (fromDate) query = query.startAfter(fromDate)
+
+    const snapshot = await query.get()
+    
+    snapshot.forEach(doc => posts.push(doc.data()))
+
+    console.timeEnd(PERFOMANCE_MESSAGE)
 
     return posts
   }
