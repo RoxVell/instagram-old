@@ -28,7 +28,6 @@ export const mutations = {
           } else {
             state.isLoading = 'user-not-exist'
           }
-
         })
         .catch(console.log)
     }
@@ -129,6 +128,21 @@ export const actions = {
       throw Error(error)
     }
   },
+  async getUser({}, username) {
+    const userDoc = await firestore
+      .collection('users')
+      .where('username', '==', username)
+      .limit(1)
+      .get()
+
+    let user = null
+
+    userDoc.forEach(doc => {
+      user = doc.data()
+    })
+
+    return user
+  },
   async getPostsByUsername({}, { username, fromDate, limit = 15, }) {
     const PERFOMANCE_MESSAGE = `Getting posts for username: ${username}`
     console.time(PERFOMANCE_MESSAGE)
@@ -144,7 +158,7 @@ export const actions = {
     if (fromDate) query = query.startAfter(fromDate)
 
     const snapshot = await query.get()
-    
+
     snapshot.forEach(doc => posts.push(doc.data()))
 
     console.timeEnd(PERFOMANCE_MESSAGE)

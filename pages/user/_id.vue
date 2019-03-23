@@ -1,34 +1,36 @@
 <template>
-  <section class="user-page container">
-    <UserProfile v-if="user" :user="user"></UserProfile>
+  <section class="profile container">
+
+    <AuthUserProfile v-if="profileType === PROFILE_TYPES['myProfile']" :user="user" />
+    <DefaultUserProfile v-if="profileType === PROFILE_TYPES['otherProfile']" :user="user" />
+    <UserNotFound v-if="profileType === PROFILE_TYPES['userNotFound']" :username="this.$route.params.id || ''"/>
 
     <Gallery class="posts-section">
       <ProfilePost class="gallery-item" v-for="(post, index) in posts" :key="index" :post="post"/>
     </Gallery>
+
   </section>
 </template>
 
 <script>
-import UserProfile from '~/components/UserProfile/Default'
-import Gallery from '~/components/Gallery'
-import ProfilePost from '~/components/ProfilePost'
+import AuthUserProfile from '~/components/UserProfile/Auth'
+import DefaultUserProfile from '~/components/UserProfile/Default'
+import { ProfilePageMixin, PROFILE_TYPES } from '~/mixins/ProfilePageMixin'
+import UserNotFound from '~/components/UserNotFound'
 
 export default {
+  mixins: [ProfilePageMixin],
+  components: {
+    AuthUserProfile,
+    DefaultUserProfile,
+    UserNotFound
+  },
   data() {
     return {
       user: null,
-      posts: []
+      isMyProfile: null,
+      PROFILE_TYPES
     }
-  },
-  components: {
-    UserProfile,
-    Gallery,
-    ProfilePost
-  },
-  async created() {
-    const { id: username } = this.$route.params
-
-    this.posts = await this.$store.dispatch('user/getPostsByUsername', { username })
   }
 }
 </script>

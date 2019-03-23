@@ -5,20 +5,16 @@
         <div class="logo"></div>
       </nuxt-link>
 
-    
       <Search />
 
       <div class="header-auth">
 
         <template v-if="$store.getters['user/isAuth']">
-
           <nuxt-link to="/upload" class="btn" tag="a">Добавить фото</nuxt-link>
-          
-          <nuxt-link class="user-section" to="/profile" tag="a">
+          <nuxt-link class="user-section" :to='`/user/${user.username}`' tag="a">
             <img class="user-avatar" :src="user.profile_picture" alt="User avatar">
             <span class="user-name">{{ user.username }}</span>
           </nuxt-link>
-          
         </template>
 
         <template v-else>
