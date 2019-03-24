@@ -15,7 +15,7 @@ export const mutations = {
   UPDATE_USER(state) {
     if (!auth.currentUser) {
       state.user = null
-      state.isLoading = 'not-auth' + Math.random()
+      state.isLoading = { status: 'not-auth' }
     } else {
       const userDoc = firestore
         .collection('users')
@@ -24,9 +24,9 @@ export const mutations = {
         .then(doc => {
           if (doc.exists) {
             state.user = doc.data()
-            state.isLoading = false
+            state.isLoading = { status: false }
           } else {
-            state.isLoading = 'user-not-exist'
+            state.isLoading = { status: 'user-not-exist' }
           }
         })
         .catch(console.log)

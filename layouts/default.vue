@@ -32,7 +32,7 @@ export default {
   }),
   watch: {
     isLoading(value) {
-      if (value) this.$router.push('/auth/login')
+      if (value.status) this.$router.push('/auth/login')
       
       this.loading = false
     }

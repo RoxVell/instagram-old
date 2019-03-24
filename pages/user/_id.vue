@@ -2,7 +2,7 @@
   <section class="profile container">
 
     <AuthUserProfile v-if="profileType === PROFILE_TYPES['myProfile']" :user="user" />
-    <DefaultUserProfile v-if="profileType === PROFILE_TYPES['otherProfile']" :user="user" />
+    <OtherUserProfile v-if="profileType === PROFILE_TYPES['otherProfile']" :user="user" />
     <UserNotFound v-if="profileType === PROFILE_TYPES['userNotFound']" :username="this.$route.params.id || ''"/>
 
     <Gallery class="posts-section">
@@ -14,15 +14,15 @@
 
 <script>
 import AuthUserProfile from '~/components/UserProfile/Auth'
-import DefaultUserProfile from '~/components/UserProfile/Default'
+import OtherUserProfile from '~/components/UserProfile/Other'
+import UserNotFound from '~/components/UserProfile/UserNotFound'
 import { ProfilePageMixin, PROFILE_TYPES } from '~/mixins/ProfilePageMixin'
-import UserNotFound from '~/components/UserNotFound'
 
 export default {
   mixins: [ProfilePageMixin],
   components: {
     AuthUserProfile,
-    DefaultUserProfile,
+    OtherUserProfile,
     UserNotFound
   },
   data() {
