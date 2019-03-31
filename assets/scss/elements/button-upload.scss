@@ -1,0 +1,10 @@
+$icon-size: 100px;
+
+.btn-upload {
+  display: block;
+  width: $icon-size;
+  height: $icon-size;
+  background-image: url('~static/images/icons/upload.svg');
+  background-repeat: no-repeat;
+  background-size: $icon-size;
+}

@@ -1,3 +1,6 @@
+@import '../elements/button-upload.scss';
+@import '../vars/colors';
+
 .upload-page {
   display: flex;
   justify-content: center;
@@ -5,8 +8,10 @@
 }
 
 .upload-elements {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 500px;
+  height: 100%;
   padding: 30px;
   border: 2px dashed #cdcdcd;
   box-sizing: border-box;
@@ -45,7 +50,6 @@
     height: 35px;
     margin-right: 10px;
     border-radius: 5px;
-    // border: 1px solid #b8b8b8;
     background-size: 30px;
   }
 
@@ -68,8 +72,11 @@
 
 .upload-section {
   display: flex;
+  flex-direction: column;
   height: inherit;
   align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .upload-media {
@@ -81,25 +88,21 @@
   z-index: -1;
 }
 
-.upload-media + .upload-button {
-  font-size: 1.25em;
-  font-weight: 700;
-  color: white;
-  background-color: black;
-  display: inline-block;
-}
+.upload-section__description {
+  p:first-child {
+    font-size: 18px;
+    margin-top: 10px;
+  }
 
-.upload-media + .upload-button {
-  cursor: pointer;
-}
+  p:last-child {
+    font-size: 14px;
+    color: #767676;
+    line-height: 25px;
+  }
 
-.upload-media :focus + label,
-.upload-media + label:hover {
-  background-color: red;
+  label {
+    cursor: pointer;
+    color: $color-blue;
+  }
 }
-
-.upload-button {
-  padding: 20px;
-}
-
 

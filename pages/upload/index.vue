@@ -2,6 +2,7 @@
   <section class="upload-page container">
     <div class="upload-elements">
       <div class="upload-formats">
+
         <div class="format">
           <span class="format-icon format-icon__photo"></span>
           <div class="format-info">
@@ -9,6 +10,7 @@
             <span class="format-desc">PNG, JPG, GIF up to 10MB</span>
           </div>
         </div>
+        
         <div class="format">
           <span class="format-icon format-icon__video"></span>
           <div class="format-info">
@@ -19,24 +21,26 @@
       </div>
 
       <div class="upload-section">
-        <input id="file" class="upload-media" type="file" accept="image/*" @change="selectFile($event)">
-        <label class="upload-button" for="file">Загрузить</label>
+        <div class="input-upload">
+          <input id="file" class="upload-media" type="file" accept="image/*" @change="selectFile($event)">
+          <label class="btn-upload" for="file"></label>
+        </div>
+        
+        <div class="upload-section__description">
+          <p>Drag and drop to upload</p>
+          <p>or <label for="file">browse</label> to choose a file</p>
+        </div>
       </div>
-
-      
     </div>
 
-
-    <!-- <img :src="previewImg" class="preview-img" style="{width: 200px;}"> <br> -->
-    <textarea v-model="post.description" cols="30" rows="10"></textarea> <br>
+    <!-- <textarea v-model="post.description" cols="30" rows="10"></textarea> <br> -->
     <button class="btn" @click="uploadPhoto" v-if="currentFile">Залить фото</button>
   </section>
 </template>
 
 <script>
-import { storage } from '~/firebase/init'
-
 export default {
+  mixins: [],
   data() {
     return {
       previewImg: null,
@@ -69,7 +73,6 @@ export default {
         .catch(error => {
           console.log(error)
         })
-      
     }
   },
   computed: {
