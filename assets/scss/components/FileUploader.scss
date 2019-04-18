@@ -108,13 +108,15 @@
     cursor: pointer;
     color: $color-blue;
 
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
 .icon-upload {
   width: 100px;
-  transition: all .2s;
+  transition: all 0.2s;
 
   &:hover,
   &:focus {
@@ -179,7 +181,6 @@ $image-size: 50px;
   background-position: center;
 }
 
-
 #drop-mask,
 .images-drop-mask {
   position: absolute;
@@ -190,4 +191,13 @@ $image-size: 50px;
   &:active {
     cursor: grabbing;
   }
+}
+
+.drag {
+  transition: all 0.2s;
+  opacity: 0.5;
+}
+
+.flip-list-move {
+  transition: transform .15s;
 }
