@@ -1,5 +1,10 @@
+@import '../transitions/fade.scss';
+
 .modal-component {
   background: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
 
   .modal-wrapper {
     position: absolute;
@@ -10,9 +15,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, .15);
+    background: rgba(0, 0, 0, 0.6);
 
     .modal-content {
+      max-width: 80vw;
       background: #fff;
       padding: 30px;
       border-radius: 5px;

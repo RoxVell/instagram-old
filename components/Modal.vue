@@ -1,11 +1,13 @@
 <template>
-  <div class="modal-component" v-if="show">
-    <div class="modal-wrapper" @click="handleClick($event)">
-      <div class="modal-content">
-        <slot></slot>
+  <transition name="fade">
+    <div class="modal-component" v-if="show">
+      <div class="modal-wrapper" @click="handleClick($event)">
+        <div class="modal-content">
+          <slot></slot>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
