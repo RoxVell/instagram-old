@@ -82,3 +82,6 @@ dist
 
 # Config firebase
 _configFirebase.json
+
+# VSCode settings
+.vscode/
