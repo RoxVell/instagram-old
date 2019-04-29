@@ -1,10 +1,7 @@
-import { auth, database, storage, firestore } from '~/firebase/init'
+import { auth, storage, firestore } from '~/firebase/init'
 import firebase from '~/firebase/init'
 import User from '../models/User'
 import Post from '../models/Post'
-
-const photosRef = storage.ref('photos/')
-const databaseRef = database.ref()
 
 export const state = () => ({
   user: null,
@@ -17,14 +14,13 @@ export const mutations = {
       state.user = null
       state.isLoading = { status: 'not-auth' }
     } else {
-      const userDoc = firestore
-        .collection('users')
-        .doc(auth.currentUser.uid)
+      firestore
+        .doc(`users/${auth.currentUser.uid}`)
         .get()
-        .then(doc => {
-          if (doc.exists) {
-            state.user = doc.data()
-            state.isLoading = { status: false }
+        .then((userDocument) => {
+          if (userDocument.exists) {
+            state.user = userDocument.data()
+            state.isLoading = { status: 'auth' }
           } else {
             state.isLoading = { status: 'user-not-exist' }
           }
@@ -38,7 +34,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async createUserWithEmailAndPassword({ commit, dispatch }, { email, username, password }) {
+  async createUserWithEmailAndPassword({ dispatch }, { email, username, password }) {
     try {
       username = username.toLowerCase()
 

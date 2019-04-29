@@ -1,12 +1,13 @@
 <template>
   <div>
     <template v-if="loading">
-      <Spinner />
+      <Spinner/>
     </template>
+
     <template v-else>
       <div class="wrapper">
-        <Header />
-        <nuxt />
+        <Header/>
+        <nuxt/>
       </div>
     </template>
   </div>
@@ -28,18 +29,17 @@ export default {
     Spinner
   },
   computed: mapState({
-    isLoading: state => state.user.isLoading
+    isLoading: (state) => state.user.isLoading
   }),
   watch: {
-    isLoading(value) {
-      if (value.status) this.$router.push('/auth/login')
-      
-      this.loading = false
+    isLoading: {
+      handler(value) {
+        this.loading = false
+      }
     }
-  },
+  }
 }
 </script>
-
 
 <style lang="scss">
 @import '~assets/scss/build.scss';
