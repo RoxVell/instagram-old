@@ -20,13 +20,13 @@
 
     <div class="upload-section">
       <div id="drop-mask"></div>
-      <div key="1" v-if="images && images.length !== 0" class="upload-section__images">
-        <div class="images" v-if="images.length !== 0">
+      <div key="1" v-if="currentFiles && currentFiles.length !== 0" class="upload-section__images">
+        <div class="images" v-if="currentFiles.length !== 0">
           <transition-group name="flip-list">
             <div
               class="images-item"
-              v-for="(image, index) in images"
-              :key="image.name"
+              v-for="(image, index) in currentFiles"
+              :key="image.src"
               :itemOrder="index"
               draggable="true"
               @dragstart="handleDragStart($event)"
@@ -120,23 +120,11 @@ export default {
       currentItem: null
     }
   },
-  computed: {
-    images() {
-      return this.currentFiles.map((file) => {
-        return {
-          name: file.name,
-          src: window.URL.createObjectURL(file)
-        }
-      })
-    }
-  },
   methods: {
     handleDragEnd(event) {
       event.target.classList.remove('drag')
 
-      const dropItemMasks = Array.from(
-        document.querySelectorAll('.images-drop-mask')
-      )
+      const dropItemMasks = Array.from(document.querySelectorAll('.images-drop-mask'))
       dropItemMasks.forEach((item) => (item.style.display = 'none'))
 
       this.currentItem = null
@@ -148,12 +136,7 @@ export default {
       let changeItemOrder = this.currentItem.attributes['itemorder'].value
 
       if (!changeItem.isSameNode(this.currentItem)) {
-        this.currentFiles = this.swapElement(
-          this.currentFiles,
-          selectedItemOrder,
-          changeItemOrder
-        )
-        console.log(this.currentFiles)
+        this.currentFiles = this.swapElement(this.currentFiles, selectedItemOrder, changeItemOrder)
       }
 
       changeItem.style.borderTopColor = ''
@@ -174,26 +157,6 @@ export default {
       const currentTargetItem = event.target.parentNode
       currentTargetItem.style.borderTopColor = '#0366D6'
       const items = document.querySelectorAll('div.images-item')
-      // let selectedItem = null
-      // let changeItem = null
-
-      // for (let i = 0; i < items.length; i++) {
-      //   if (items[i].isSameNode(event.target.parentNode)) selectedItem = i
-      //   else if (items[i].isSameNode(this.currentItem)) changeItem = i
-      // }
-
-      // if (!items[selectedItem].isSameNode(this.currentItem)) {
-      //   this.currentFiles = this.swapElement(
-      //     this.currentFiles,
-      //     selectedItem,
-      //     changeItem
-      //   )
-      // }
-
-      // this.currentFiles = this.swapElement(this.currentFiles, 0, 1)
-      // document
-      //   .querySelector('.images span')
-      //   .insertBefore(this.currentItem, event.target.parentElement)
     },
     handleDragLeave(event) {
       event.target.parentNode.style.borderTopColor = ''
@@ -204,13 +167,18 @@ export default {
       )
 
       const isFilesFormats = files.every((file) => {
-        return this.acceptFileFormats.some((format) =>
-          file.type.startsWith(format)
-        )
+        return this.acceptFileFormats.some((format) => file.type.startsWith(format))
       })
 
       if (isFilesFormats) {
-        this.currentFiles.push(...files)
+        const images = files.map((file) => {
+          return {
+            name: file.name,
+            src: window.URL.createObjectURL(file)
+          }
+        })
+
+        this.currentFiles.push(...images)
       } else {
         // TODO: wrong formats
       }
