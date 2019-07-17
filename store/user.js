@@ -1,6 +1,5 @@
-import { auth, storage, firestore } from '~/firebase/init'
+import { auth, storage, firestore, functions } from '~/firebase/init'
 import firebase from '~/firebase/init'
-import User from '../models/User'
 import Post from '../models/Post'
 
 export const state = () => ({
@@ -35,23 +34,9 @@ export const mutations = {
 
 export const actions = {
   async createUserWithEmailAndPassword({ dispatch }, { email, username, password }) {
-    try {
-      username = username.toLowerCase()
+    const createUser = functions.httpsCallable('createUser')
 
-      const isUsernameAvailable = await dispatch('checkUsername', username)
-
-      if (!isUsernameAvailable) throw Error(`${username} has been taken!`)
-
-      let { user } = await auth.createUserWithEmailAndPassword(email, password)
-
-      const defaultAvatar = await storage.ref('photos/avatar_default.png').getDownloadURL()
-
-      const newUser = User({ email, username, avatar: defaultAvatar })
-
-      await firestore.collection('users').doc(user.uid).set(newUser)
-    } catch(error) {
-      throw Error(error)
-    }
+    return createUser({ email, username, password })
   },
   async signInWithEmailAndPassword({ commit }, { email, password }) {
     return await auth.signInWithEmailAndPassword(email, password)

@@ -3,33 +3,39 @@
     <p class="form-title">Зарегистрируйтесь</p>
     <div class="form-element">
       <label class="required" for="signup-mail">E-mail</label>
-      <input id="signup-mail" type="email" v-model="signupForm.email">
+      <input id="signup-mail" type="email" v-model="signupForm.email" />
     </div>
 
     <div class="form-element">
       <label class="required" for="signup-login">Имя пользователя</label>
-      <input id="signup-login" v-model.trim="signupForm.username" @change="checkUsername" @input="usernameToLowerCase">
+      <input
+        id="signup-login"
+        v-model.trim="signupForm.username"
+        @change="checkUsername"
+        @input="usernameToLowerCase"
+      />
       <p class="form-element__desc form-element__error">{{ usernameError }}</p>
     </div>
-    
+
     <div class="form-element">
       <label class="required" for="signup-password">Пароль</label>
-      <input id="signup-password" type="password" v-model="signupForm.password">
+      <input id="signup-password" type="password" v-model="signupForm.password" />
       <p class="form-element__desc">Пароль должен содержать не менее 8 символов</p>
     </div>
 
     <div class="form-element">
       <label class="required" for="signup-password-repeat">Подтвердите пароль</label>
-      <input id="signup-password-repeat" type="password" v-model="signupForm.repeatPassword">
+      <input
+        id="signup-password-repeat"
+        type="password"
+        v-model="signupForm.repeatPassword"
+        @keyup.enter="createUserAndLogin"
+      />
+      <p class="form-element__desc form-element__error">{{ passwordsCompareError }}</p>
     </div>
-   
+
     <div class="form-element">
-      <button
-        class="btn btn-primary"
-        @keyup.enter="createUserWithEmailAndPassword"
-        @click="createUserWithEmailAndPassword">
-        Регистрация
-      </button>
+      <button class="btn btn-primary" @click="createUserAndLogin">Регистрация</button>
     </div>
   </div>
 </template>
@@ -44,7 +50,8 @@ export default {
         repeatPassword: '',
         username: ''
       },
-      usernameError: ''
+      usernameError: '',
+      passwordsCompareError: ''
     }
   },
   methods: {
@@ -55,40 +62,64 @@ export default {
     checkUsername(e) {
       this.usernameError = ''
 
-      let username = e.target.value
+      const username = e.target.value.toLowerCase()
 
-      this.$store.dispatch('user/checkUsername', username)
-        .then(response => {
+      this.$store
+        .dispatch('user/checkUsername', username)
+        .then((response) => {
           if (!response) {
             this.usernameError = `Никнейм ${username} занят`
           }
         })
         .catch()
-
     },
-    createUserWithEmailAndPassword() {
-      if (!this.isValidUser) return
+    async createUserAndLogin() {
+      if (!this.signupDataIsValid()) return
 
-      const { email, username, password } = this.signupForm
+      const userData = this.signupForm
 
-      this.$store.dispatch('user/createUserWithEmailAndPassword', {
+      try {
+        const message = await this.createUserWithEmailAndPassword(userData)
+        console.log(message)
+        await this.signInWithEmailAndPassword(userData)
+        this.$router.push({ path: '/' })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    createUserWithEmailAndPassword({ email, username, password }) {
+      return this.$store.dispatch('user/createUserWithEmailAndPassword', {
         email,
         username,
         password
       })
-      .then(this.signupSucces)
-      .catch(this.signupFailed)
     },
-    signupSucces(user) {
-      this.$router.push({
-        path: '/'
+    signInWithEmailAndPassword({ email, password }) {
+      return this.$store.dispatch('user/signInWithEmailAndPassword', {
+        email,
+        password
       })
     },
-    signupFailed(error) {
-      console.log(error);
+    signupDataIsValid() {
+      return this.usernameIsValid() && this.passwordsIsValid()
     },
-    isValidUser() {
-      return (this.password === this.repeatPassword)
+    usernameIsValid() {
+      return this.usernameError === ''
+    },
+    passwordsIsValid() {
+      const { password, repeatPassword } = this.signupForm
+      const passwordIsEnoughLength = password.length >= 8
+      const passwordsIsCompare = password === repeatPassword
+
+      if (!this.passwordIsEnoughLength) {
+        this.passwordsCompareError = 'Пароль недостаточно сложный'
+      } else if (!this.passwordsIsCompare) {
+        this.passwordsCompareError = 'Пароли не совпадают'
+      } else {
+        this.passwordsCompareError = ''
+      }
+
+      return passwordIsEnoughLength && passwordsIsCompare
     }
   }
 }
