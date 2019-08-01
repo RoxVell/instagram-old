@@ -31,6 +31,7 @@
 .upload-formats {
   display: flex;
   justify-content: center;
+  flex: 35px 0 0;
 
   .format {
     display: flex;
@@ -68,10 +69,11 @@
 }
 
 .upload-section {
-  position: relative;
-  height: 100%;
+  display: flex;
+  justify-content: center;
   margin-top: 25px;
   border: 1px dashed #cdcdcd;
+  flex-grow: 1;
 
   .upload-section__input {
     display: flex;
@@ -194,10 +196,10 @@ $image-size: 50px;
 }
 
 .drag {
-  transition: all 0.2s;
+  transition: all 0.3s;
   opacity: 0.5;
 }
 
 .flip-list-move {
-  transition: transform .15s;
+  transition: transform 0.3s;
 }
