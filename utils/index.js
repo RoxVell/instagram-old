@@ -1,4 +1,4 @@
-function debounce(f, ms) {
+export function debounce(f, ms) {
   let timeout = null
 
   return function(...args) {
@@ -10,4 +10,7 @@ function debounce(f, ms) {
   }
 }
 
-export { debounce }
+export function isComponent(vnode, componentName) {
+  const regex = new RegExp(`vue-component-\\d+-${componentName}`)
+  return regex.test(vnode.tag)
+}
