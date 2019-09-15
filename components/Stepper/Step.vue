@@ -19,17 +19,23 @@ export default {
   },
   watch: {
     // pass changed condition to parent component Stepper
-    previousCondition(value) {
-      this.$parent.$emit('conditionChanged', {
-        key: 'currentStepPreviousCondition',
-        value
-      })
+    previousCondition: {
+      handler(value) {
+        this.$parent.$emit('conditionChanged', {
+          key: 'currentStepPreviousCondition',
+          value
+        })
+      },
+      immediate: true
     },
-    nextCondition(value) {
-      this.$parent.$emit('conditionChanged', {
-        key: 'currentStepNextCondition',
-        value
-      })
+    nextCondition: {
+      handler(value) {
+        this.$parent.$emit('conditionChanged', {
+          key: 'currentStepNextCondition',
+          value
+        })
+      },
+      immediate: true
     }
   }
 }

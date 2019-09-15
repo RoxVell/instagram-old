@@ -63,5 +63,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '~assets/scss/components/Stepper.scss';
+.step-content {
+  height: 100%;
+  overflow: hidden;
+}
 </style>
