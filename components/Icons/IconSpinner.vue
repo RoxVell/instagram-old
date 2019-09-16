@@ -1,5 +1,6 @@
 <template>
   <circle
+    cx="50"
     cy="50"
     fill="none"
     :stroke="color"
