@@ -4,17 +4,22 @@ body {
   background: #f6f6f6;
 }
 
+// Hide img alt attribute
+img {
+  text-indent: -9999px;
+}
+
 input {
   border: 1px solid #d1d5da;
   border-radius: 3px;
   color: $color-dark;
   line-height: 20px;
   padding: 6px 8px;
-  box-shadow: inset 0 1px 2px rgba(27,31,35,.075);
+  box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075);
 
   &:focus {
     border-color: #2188ff;
-    box-shadow: inset 0 1px 2px rgba(27,31,35,.075),0 0 0 .2em rgba(3,102,214,.3);
+    box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075), 0 0 0 0.2em rgba(3, 102, 214, 0.3);
   }
 }
 
@@ -25,18 +30,16 @@ button {
 button.btn {
   padding: 10px 50px;
   font-size: 16px;
-  border: 1px solid rgba(27,31,35,.2);
-  border-radius: .25em;
+  border: 1px solid rgba(27, 31, 35, 0.2);
+  border-radius: 0.25em;
+  background-color: transparent;
   cursor: pointer;
 }
 
-a, a:visited {
-  color: $color-blue;
+a,
+a:visited {
+  color: inherit;
   text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
 }
 
 button.link {
@@ -44,10 +47,6 @@ button.link {
   color: $color-blue;
   background-color: transparent;
   cursor: pointer;
-}
-
-button:hover {
-  text-decoration: underline;
 }
 
 .wrapper {

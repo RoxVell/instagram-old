@@ -1,5 +1,12 @@
-body, input, button, textarea {
+body,
+input,
+button,
+textarea {
   font-family: 'Roboto', 'sans-serif';
+}
+
+body {
+  width: 100%;
 }
 
 * {
@@ -8,9 +15,15 @@ body, input, button, textarea {
   box-sizing: border-box;
 }
 
-input, button { outline: none; }
+input,
+button,
+textarea {
+  outline: none;
+}
 
-ul { list-style-type: none; }
+ul {
+  list-style-type: none;
+}
 
 .container {
   width: 1000px;
