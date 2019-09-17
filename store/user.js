@@ -33,18 +33,18 @@ export const mutations = {
 }
 
 export const actions = {
-  async createUserWithEmailAndPassword({ dispatch }, { email, username, password }) {
+  async createUserWithEmailAndPassword(_, { email, username, password }) {
     const createUser = functions.httpsCallable('createUser')
 
     return createUser({ email, username, password })
   },
-  async signInWithEmailAndPassword({ commit }, { email, password }) {
+  async signInWithEmailAndPassword(_, { email, password }) {
     return await auth.signInWithEmailAndPassword(email, password)
   },
-  async signOut({ commit }) {
+  async signOut() {
     try {
       await auth.signOut()
-    } catch(error) {
+    } catch (error) {
       throw Error(error)
     }
   },

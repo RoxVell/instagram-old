@@ -1,26 +1,40 @@
 <template>
-  <div class="signup">
+  <form class="signup" @submit.prevent="createUserAndLogin">
     <p class="form-title">Зарегистрируйтесь</p>
     <div class="form-element">
       <label class="required" for="signup-mail">E-mail</label>
-      <input id="signup-mail" type="email" v-model="signupForm.email" />
+      <input id="signup-mail" type="email" v-model.trim="email" />
+      <p class="form-element__desc form-element__error">
+        <template v-if="$v.email.$dirty && !$v.email.required">Поле обязательно для заполнения</template>
+        <template v-else-if="$v.email.$dirty && !$v.email.email">Поле должно иметь формат email</template>
+      </p>
     </div>
 
     <div class="form-element">
       <label class="required" for="signup-login">Имя пользователя</label>
       <input
+        style="text-transform: lowercase"
         id="signup-login"
-        v-model.trim="signupForm.username"
-        @change="checkUsername"
-        @input="usernameToLowerCase"
+        v-model.lazy.trim="username"
+        @blur="usernameCheck"
       />
-      <p class="form-element__desc form-element__error">{{ usernameError }}</p>
+      <p class="form-element__desc form-element__error">
+        <template v-if="$v.username.$dirty && !$v.username.required">Поле обязательно для заполнения</template>
+        <template
+          v-else-if="$v.username.$dirty && !$v.username.$pending && !$v.username.isUnique"
+        >Имя пользователя {{ $v.username.$model }} занято</template>
+      </p>
     </div>
 
     <div class="form-element">
       <label class="required" for="signup-password">Пароль</label>
-      <input id="signup-password" type="password" v-model="signupForm.password" />
-      <p class="form-element__desc">Пароль должен содержать не менее 8 символов</p>
+      <input id="signup-password" type="password" v-model="password" />
+      <p class="form-element__desc form-element__error">
+        <template v-if="$v.password.$dirty && !$v.password.required">Поле обязательно для заполнения</template>
+        <template
+          v-else-if="$v.password.$dirty && !$v.password.minLength"
+        >Пароль должен содержать не менее {{ $v.password.$params.minLength.min }} символов</template>
+      </p>
     </div>
 
     <div class="form-element">
@@ -28,63 +42,97 @@
       <input
         id="signup-password-repeat"
         type="password"
-        v-model="signupForm.repeatPassword"
+        v-model="repeatPassword"
         @keyup.enter="createUserAndLogin"
       />
-      <p class="form-element__desc form-element__error">{{ passwordsCompareError }}</p>
+      <p class="form-element__desc form-element__error">
+        <template v-if="!$v.repeatPassword.sameAsPassword">Введённые пароли не совпадают</template>
+      </p>
     </div>
 
     <div class="form-element">
-      <button class="btn btn-primary" @click="createUserAndLogin">Регистрация</button>
+      <Button type="submit" :loading="loading">Регистрация</Button>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
-export default {
+import Vue from 'vue'
+import Button from '~/components/Button'
+import { validationMixin } from 'vuelidate'
+import { required, minLength, email, sameAs } from 'vuelidate/lib/validators'
+
+const RegisterComponent = Vue.extend({
+  mixins: [validationMixin],
+  components: {
+    Button
+  },
   data() {
     return {
-      signupForm: {
-        email: '',
-        password: '',
-        repeatPassword: '',
-        username: ''
-      },
-      usernameError: '',
-      passwordsCompareError: ''
+      email: '',
+      username: '',
+      password: '',
+      repeatPassword: '',
+      loading: false
+    }
+  },
+  validations: {
+    username: {
+      required,
+      minLength: minLength(3),
+      isUnique(username) {
+        if (username === '') return false
+
+        return this.$store
+          .dispatch('user/checkUsername', username)
+          .then((isUnique) => isUnique)
+          .catch(() => false)
+      }
+    },
+    email: {
+      required,
+      email
+    },
+    password: {
+      required,
+      minLength: minLength(8)
+    },
+    repeatPassword: {
+      required,
+      sameAsPassword: sameAs('password')
     }
   },
   methods: {
+    usernameCheck() {
+      this.username = this.username.toLowerCase()
+      this.$v.username.$touch()
+    },
     usernameToLowerCase(e) {
       let username = e.target.value
-      this.signupForm.username = username.toLowerCase()
-    },
-    checkUsername(e) {
-      this.usernameError = ''
-
-      const username = e.target.value.toLowerCase()
-
-      this.$store
-        .dispatch('user/checkUsername', username)
-        .then((response) => {
-          if (!response) {
-            this.usernameError = `Никнейм ${username} занят`
-          }
-        })
-        .catch()
+      this.username = username.toLowerCase()
     },
     async createUserAndLogin() {
-      if (!this.signupDataIsValid()) return
+      if (this.$v.$invalid) {
+        this.$v.$touch()
+        return
+      }
 
-      const userData = this.signupForm
+      this.loading = true
+
+      const userData = {
+        email: this.email,
+        username: this.username,
+        password: this.password
+      }
 
       try {
         const message = await this.createUserWithEmailAndPassword(userData)
-        console.log(message)
         await this.signInWithEmailAndPassword(userData)
         this.$router.push({ path: '/' })
       } catch (error) {
         console.log(error)
+      } finally {
+        this.loading = false
       }
     },
     createUserWithEmailAndPassword({ email, username, password }) {
@@ -99,28 +147,9 @@ export default {
         email,
         password
       })
-    },
-    signupDataIsValid() {
-      return this.usernameIsValid() && this.passwordsIsValid()
-    },
-    usernameIsValid() {
-      return this.usernameError === ''
-    },
-    passwordsIsValid() {
-      const { password, repeatPassword } = this.signupForm
-      const passwordIsEnoughLength = password.length >= 8
-      const passwordsIsCompare = password === repeatPassword
-
-      if (!this.passwordIsEnoughLength) {
-        this.passwordsCompareError = 'Пароль недостаточно сложный'
-      } else if (!this.passwordsIsCompare) {
-        this.passwordsCompareError = 'Пароли не совпадают'
-      } else {
-        this.passwordsCompareError = ''
-      }
-
-      return passwordIsEnoughLength && passwordsIsCompare
     }
   }
-}
+})
+
+export default RegisterComponent
 </script>

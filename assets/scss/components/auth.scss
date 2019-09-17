@@ -1,6 +1,7 @@
 @import '../vars/colors';
 @import '../components/form.scss';
 @import '../elements/button-primary.scss';
+@import '../elements/button-loading.scss';
 
 $form-width: 350px;
 
@@ -19,7 +20,7 @@ section.auth {
   background: #fff;
 }
 
-.auth-form > div {
+.auth-form > form {
   padding: 20px;
   width: 100%;
   display: flex;
@@ -32,4 +33,22 @@ section.auth {
   justify-content: center;
   padding-top: 15px;
   padding-bottom: 15px;
+  font-size: 15px;
+
+  a {
+    color: $color-blue;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+button.btn-signup,
+button.btn-login {
+  font-size: 15px;
+}
+
+#signup-login {
+  text-transform: lowercase;
 }
