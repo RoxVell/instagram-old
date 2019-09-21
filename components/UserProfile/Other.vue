@@ -1,19 +1,17 @@
 <template>
   <UserProfile :user="user">
     <template slot="username-section">
-      <button
-        class="btn btn-edit"
-        @click="follow">
-        Подписаться
-      </button>
-      
+      <template v-if="isAuth">
+        <button class="btn btn-edit" @click="follow">Подписаться</button>
+      </template>
+      <template v-else></template>
     </template>
-     
   </UserProfile>
 </template>
 
 <script>
 import UserProfile from '~/components/UserProfile/Default'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -29,6 +27,9 @@ export default {
     return {
       isFollowing: null
     }
+  },
+  computed: {
+    ...mapGetters({ isAuth: 'account/isAuth' })
   },
   methods: {
     follow() {

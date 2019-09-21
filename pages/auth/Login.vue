@@ -77,7 +77,7 @@ const LoginComponent = Vue.extend({
       this.loading = true
 
       await this.$store
-        .dispatch('user/signInWithEmailAndPassword', {
+        .dispatch('auth/signInWithEmailAndPassword', {
           email: this.email,
           password: this.password
         })

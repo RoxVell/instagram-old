@@ -1,13 +1,13 @@
 <template>
   <div>
     <template v-if="loading">
-      <Spinner/>
+      <Spinner />
     </template>
 
     <template v-else>
       <div class="wrapper">
-        <Header/>
-        <nuxt/>
+        <Header />
+        <nuxt />
       </div>
     </template>
   </div>
@@ -29,7 +29,7 @@ export default {
     Spinner
   },
   computed: mapState({
-    isLoading: (state) => state.user.isLoading
+    isLoading: (state) => state.account.isLoading
   }),
   watch: {
     isLoading: {

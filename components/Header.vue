@@ -10,7 +10,7 @@
       <div class="header-auth">
         <nav>
           <ul class="header-menu">
-            <template v-if="$store.getters['user/isAuth']">
+            <template v-if="user">
               <nuxt-link to="/upload" class="btn" tag="li">
                 <img
                   style="width: 18px; margin-right: 7px;"
@@ -21,18 +21,8 @@
               </nuxt-link>
 
               <nuxt-link :to="`/user/${user.username}`" tag="li">
-                <img
-                  style="width: 30px; height: 30px; margin-right: 10px;"
-                  class="user-avatar"
-                  :src="user.profile_picture"
-                  alt="avatar"
-                />
-                <!-- <img
-                  style="width: 18px; margin-right: 7px;"
-                  src="/images/icons/user-outline.svg"
-                  alt
-                />-->
-                <span class="user-name">{{ user.username }}</span>
+                <img class="user-avatar" :src="user.profile_picture" alt="avatar" />
+                <span>{{ user.username }}</span>
               </nuxt-link>
 
               <li class="header-menu__break"></li>
@@ -61,12 +51,12 @@ export default {
     Search
   },
   computed: mapState({
-    user: (state) => state.user.user
+    user: (state) => state.account.user
   }),
   methods: {
     signOut() {
       this.$store
-        .dispatch('user/signOut')
+        .dispatch('auth/signOut')
         .then(() => {
           this.$router.replace('/')
         })
@@ -76,6 +66,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~assets/scss/components/header';
 </style>
+

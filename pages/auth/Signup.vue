@@ -12,12 +12,7 @@
 
     <div class="form-element">
       <label class="required" for="signup-login">Имя пользователя</label>
-      <input
-        style="text-transform: lowercase"
-        id="signup-login"
-        v-model.lazy.trim="username"
-        @blur="usernameCheck"
-      />
+      <input id="signup-login" v-model.lazy.trim="username" @blur="usernameCheck" />
       <p class="form-element__desc form-element__error">
         <template v-if="$v.username.$dirty && !$v.username.required">Поле обязательно для заполнения</template>
         <template
@@ -84,7 +79,7 @@ const RegisterComponent = Vue.extend({
         if (username === '') return false
 
         return this.$store
-          .dispatch('user/checkUsername', username)
+          .dispatch('auth/checkUsername', username)
           .then((isUnique) => isUnique)
           .catch(() => false)
       }
@@ -136,14 +131,14 @@ const RegisterComponent = Vue.extend({
       }
     },
     createUserWithEmailAndPassword({ email, username, password }) {
-      return this.$store.dispatch('user/createUserWithEmailAndPassword', {
+      return this.$store.dispatch('auth/createUserWithEmailAndPassword', {
         email,
         username,
         password
       })
     },
     signInWithEmailAndPassword({ email, password }) {
-      return this.$store.dispatch('user/signInWithEmailAndPassword', {
+      return this.$store.dispatch('auth/signInWithEmailAndPassword', {
         email,
         password
       })
