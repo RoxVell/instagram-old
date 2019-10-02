@@ -5,5 +5,6 @@
     stroke-linecap="round"
     stroke-miterlimit="10"
     stroke-width="2"
+    v-bind="$attrs"
   />
 </template>
