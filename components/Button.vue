@@ -1,5 +1,11 @@
 <template>
-  <button v-bind="$attrs" class="btn btn-primary" :class="{ 'btn-loading': loading }">
+  <button
+    v-bind="$attrs"
+    class="btn"
+    @click="$emit('click')"
+    :disabled="loading"
+    :class="{ 'btn-loading': loading }"
+  >
     <span class="text">
       <slot></slot>
     </span>
@@ -26,3 +32,8 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import '~/assets/scss/elements/button/button.btn';
+@import '~/assets/scss/elements/button/button.btn_loading';
+</style>
