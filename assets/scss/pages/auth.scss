@@ -1,7 +1,7 @@
-@import '../vars/colors';
-@import '../components/form.scss';
-@import '../elements/button-primary.scss';
-@import '../elements/button-loading.scss';
+@import '~/assets/scss/vars/_colors';
+@import '~/assets/scss/components/form.scss';
+@import '~/assets/scss/elements/button/button.btn_loading.scss';
+@import '~/assets/scss/elements/button/button.btn_blue.scss';
 
 $form-width: 350px;
 

@@ -31,7 +31,7 @@
     </div>
 
     <div class="form-element">
-      <Button type="submit" :loading="loading">Войти</Button>
+      <Button type="submit" :loading="loading" class="btn btn_blue">Войти</Button>
     </div>
   </form>
 </template>

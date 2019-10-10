@@ -46,7 +46,7 @@
     </div>
 
     <div class="form-element">
-      <Button type="submit" :loading="loading">Регистрация</Button>
+      <Button type="submit" :loading="loading" class="btn btn_blue">Регистрация</Button>
     </div>
   </form>
 </template>

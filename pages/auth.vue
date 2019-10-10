@@ -49,5 +49,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import '~assets/scss/components/auth';
+@import '~assets/scss/pages/auth';
 </style>
