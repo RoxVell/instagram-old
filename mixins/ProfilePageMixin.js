@@ -1,4 +1,4 @@
-import { debounce } from '~/utils/index'
+import { debounce, scrollHandler } from '~/utils/index'
 import ProfilePost from '~/components/ProfilePost'
 import Gallery from '~/components/Gallery'
 
@@ -13,23 +13,18 @@ const ProfilePageMixin = {
     ProfilePost,
     Gallery
   },
+  beforeRouteLeave(to, from, next) {
+    document.onscroll = null
+    next()
+  },
   data() {
     return {
+      user: null,
       posts: [],
       loading: false,
-      isPostsLoaded: false,
-      profileType: null
-    }
-  },
-  watch: {
-    user(updatedUser) {
-      if (updatedUser.posts.length !== this.user.posts.length) this.getPosts()
-    },
-    posts(newPosts) {
-      this.isPostsLoaded = (newPosts.length >= this.user.posts)
-    },
-    isPostsLoaded(value) {
-      if (value) document.onscroll = null
+      profileType: null,
+      lazyImageObserver: null,
+      queryPaginate: null
     }
   },
   methods: {
@@ -37,62 +32,46 @@ const ProfilePageMixin = {
       this.loading = true
 
       try {
-        const lastDate = (this.posts.length !== 0) ? this.posts[this.posts.length - 1].created_date : null
-        const newPosts = await this.$store.dispatch('user/getPostsByUsername', {
-          username: this.user.username,
-          fromDate: lastDate
-        })
-        this.posts.push(...newPosts)
+        let result = await this.queryPaginate.next()
+        if (result.done) document.onscroll = null
+        this.posts.push(...result.value)
       } catch (error) {
         console.log(error)
       }
 
       this.loading = false
     },
-    scrollEvent(e) {
-      const HEIGHT_HANDLER = 500
-      const currentScroll = window.innerHeight + window.scrollY
-      const fullScroll = document.body.offsetHeight
+    async identifyUser(username) {
+      if (!this.validateUsername(username)) return PROFILE_TYPES.userNotFound
 
-      const isHandlable = (fullScroll - currentScroll <= HEIGHT_HANDLER)
+      const myAccount = this.$store.state.account.user
 
-      if (isHandlable && !this.loading && !this.isPostsLoaded) {
-        this.getPosts()
-      }
-    },
-    async identifyUser() {
-      let profileType = null
-
-      const username = this.$route.params.id
-
-      if (!this.validateUsername(username)) {
-        profileType = PROFILE_TYPES['userNotFound']
+      if (myAccount && myAccount.username === username) {
+        this.user = myAccount
+        return PROFILE_TYPES.myProfile
       } else {
-        const myProfile = this.$store.state.user.user
+        // if it's not my profile try to get it from firestore
+        this.user = await this.$store.dispatch('account/getUser', username)
 
-        if (username === myProfile.username) {
-          this.user = myProfile
-          profileType = PROFILE_TYPES['myProfile']
-        } else {
-          // if it's not my profile try to get him from firestore
-          this.user = await this.$store.dispatch('user/getUser', username)
-          profileType = (this.user) ? PROFILE_TYPES['otherProfile'] : PROFILE_TYPES['userNotFound']
-        }
+        return this.user ? PROFILE_TYPES.otherProfile : PROFILE_TYPES.userNotFound
       }
-
-      return profileType
     },
     validateUsername(username) {
       // TODO: more complex validation logic
-      return (username ? true : false)
+      return username ? true : false
     }
   },
+  mounted() {
+    document.onscroll = debounce(() => {
+      if (!this.loading) scrollHandler(500, this.getPosts)
+    }, 200)
+  },
   async created() {
-    this.profileType = await this.identifyUser()
+    this.profileType = await this.identifyUser(this.$route.params.id)
 
-    if (this.profileType !== PROFILE_TYPES['userNotFound']) {
+    if (this.profileType !== PROFILE_TYPES.userNotFound) {
+      this.queryPaginate = await this.$store.dispatch('post/getPostsByUsername', this.user.username)
       this.getPosts()
-      document.onscroll = debounce(this.scrollEvent, 200)
     }
   }
 }
