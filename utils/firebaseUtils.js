@@ -1,5 +1,7 @@
 import { APP_ID } from '~/firebase/init'
 
+
+export async function* QueryPaginate(query, limit, cb) {
   let lastSnapshot = null
 
   query = query.limit(limit)
