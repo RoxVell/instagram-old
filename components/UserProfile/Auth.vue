@@ -1,20 +1,27 @@
 <template>
   <UserProfile :user="user">
-    <template slot="username-section">
-      <button
-        class="btn btn-edit"
-        @click="switchEditMode">
-        {{ editMode ? "Сохранить" : "Редактировать профиль" }}
-      </button>
+    <template #user-avatar>
+      <div class="user-avatar__change" @click="changeAvatarShow = true">
+        <AuthUserAvatar class="profile-section__avatar" :size="150" />
+        <div class="change-avatar-hint">Сменить аватар</div>
+      </div>
+    </template>
       
-      <button class="btn" @click="signOut">Выйти</button>
+    <template #username-section>
+      <button
+        class="btn btn_blue btn-edit"
+        @click="switchEditMode"
+      >{{ editMode ? "Сохранить" : "Редактировать профиль" }}</button>
     </template>
 
-    <template slot="description-section">
+    <template #description-section>
       <div class="profile-description" v-if="user.profile_description">
         <textarea
-          :readonly="!editMode" class="default" style="width: 100%;" v-model="user.profile_description">
-        </textarea>
+          :readonly="!editMode"
+          class="default"
+          style="width: 100%;"
+          v-model="user.profile_description"
+        ></textarea>
       </div>
     </template>
      
@@ -23,6 +30,7 @@
 
 <script>
 import UserProfile from '~/components/UserProfile/Default'
+import AuthUserAvatar from '~/components/Avatar/AuthUserAvatar'
 
 export default {
   props: {
@@ -32,7 +40,8 @@ export default {
     }
   },
   components: {
-    UserProfile
+    UserProfile,
+    AuthUserAvatar
   },
   data() {
     return {
@@ -43,8 +52,7 @@ export default {
     switchEditMode() {
       if (this.editMode) {
         this.saveProfileSettings()
-      }
-      else {
+      } else {
         this.editMode = true
       }
     },

@@ -1,7 +1,7 @@
 <template>
   <img
     :src="avatarUrl"
-    :style="imgStyle"
+    :style="avatarStyle"
     ref="avatarImg"
     :alt="`${username} user avatar`"
     v-bind="$attrs"
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { getUserAvatar, getDefaultUserAvatar } from '~/utils/firebaseUtils.ts'
+import { getUserAvatar, getDefaultUserAvatar } from '~/utils/firebaseUtils.js'
 
 export default {
   props: {
@@ -17,10 +17,6 @@ export default {
     image: String,
     size: {
       type: Number
-    },
-    defaultAvatar: {
-      type: String,
-      default: getDefaultUserAvatar()
     },
     circle: {
       type: Boolean,
@@ -34,7 +30,7 @@ export default {
 
       return getUserAvatar(this.username)
     },
-    imgStyle() {
+    avatarStyle() {
       const styles = {}
 
       if (this.circle) styles['borderRadius'] = '50%'
@@ -57,7 +53,7 @@ export default {
      * onerror event fires when user has no avatar
      * In this case replace avatar with default one
      */
-    avatarImg.onerror = () => (avatarImg.src = this.defaultAvatar)
+    avatarImg.onerror = () => (avatarImg.src = getDefaultUserAvatar())
   }
 }
 </script>

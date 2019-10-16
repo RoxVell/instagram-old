@@ -56,6 +56,7 @@
 
         <div class="comment-reply" v-if="isReplying">
           <textarea
+            ref="commentReplyInputRef"
             class="comment-reply__input"
             @input="resizeComment"
             @keypress="addReply"
@@ -74,7 +75,7 @@
 import IconBase from '~/components/Icons/IconBase'
 import IconLike from '~/components/Icons/IconLike'
 import IconClose from '~/components/Icons/IconClose'
-import UserAvatar from '~/components/UserAvatar'
+import UserAvatar from '~/components/Avatar/UserAvatar'
 
 export default {
   name: 'Comment',
@@ -124,7 +125,6 @@ export default {
           text: this.replyText,
           isReply: true
         })
-
       }
     },
     loadReplies() {
@@ -169,6 +169,10 @@ export default {
     },
     replyToComment() {
       this.isReplying = true
+
+      this.$nextTick(() => {
+        this.$refs.commentReplyInputRef.focus()
+      })
     }
   }
 }

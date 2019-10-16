@@ -1,6 +1,8 @@
 <template>
   <div class="profile-section">
-    <img :src="user.profile_picture" class="profile-section__avatar" alt="User Avatar">
+    <slot name="user-avatar">
+      <UserAvatar :username="user.username" :size="150" class="profile-section__avatar" />
+    </slot>
 
     <div class="profile-section__user-info">
 
@@ -33,12 +35,17 @@
 </template>
 
 <script>
+import UserAvatar from '~/components/Avatar/UserAvatar'
+
 export default {
   props: {
     user: {
       type: Object,
       required: true
     }
+  },
+  components: {
+    UserAvatar
   }
 }
 </script>

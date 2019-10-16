@@ -2,10 +2,10 @@
   <div class="comment-component comment-component-owner">
     <div class="user-info">
       <div class="user-avatar">
-        <img :src="postOwner.profile_picture" :alt="postOwner.username" />
+        <AuthUserAvatar />
       </div>
       <div class="user-comment">
-        <p class="comment-username">{{ postOwner.username }}</p>
+        <p class="comment-username">{{ post.username }}</p>
         <p class="comment-date">{{ post.timeAgo }}</p>
       </div>
     </div>
@@ -18,14 +18,11 @@
 </template>
 
 <script>
+import AuthUserAvatar from '~/components/Avatar/AuthUserAvatar'
 import { computeTimeAgo } from '~/utils/index'
 
 export default {
   props: {
-    postOwner: {
-      type: Object,
-      required: true
-    },
     post: {
       type: Object,
       required: true
@@ -33,6 +30,9 @@ export default {
     date: {
       type: String
     }
+  },
+  components: {
+    AuthUserAvatar
   }
 }
 </script>

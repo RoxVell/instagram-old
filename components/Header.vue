@@ -21,7 +21,7 @@
               </nuxt-link>
 
               <nuxt-link :to="`/user/${user.username}`" tag="li">
-                <img class="user-avatar" :src="user.profile_picture" alt="avatar" />
+                <AuthUserAvatar class="user-avatar" :size="30" />
                 <span>{{ user.username }}</span>
               </nuxt-link>
 
@@ -44,11 +44,13 @@
 import { mapState } from 'vuex'
 import User from '~/components/User'
 import Search from '~/components/Search'
+import AuthUserAvatar from '~/components/Avatar/AuthUserAvatar'
 
 export default {
   components: {
     User,
-    Search
+    Search,
+    AuthUserAvatar
   },
   computed: mapState({
     user: (state) => state.account.user
@@ -67,6 +69,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~assets/scss/components/header';
+@import '~assets/scss/components/Header';
 </style>
 

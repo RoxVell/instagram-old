@@ -1,5 +1,4 @@
-export async function* QueryPaginate(query, limit = 15) {
-  if (!query) throw new Error('Query is not defined!')
+import { APP_ID } from '~/firebase/init'
 
   let lastSnapshot = null
 
@@ -31,4 +30,12 @@ export function getDocuments(documentSnapshots) {
   })
 
   return data
+}
+
+export function getUserAvatar(username) {
+  return `https://firebasestorage.googleapis.com/v0/b/${APP_ID}.appspot.com/o/avatars%2F${username}.jpg?alt=media`
+}
+
+export function getDefaultUserAvatar(fileName = 'avatar_default.jpg') {
+  return `https://firebasestorage.googleapis.com/v0/b/${APP_ID}.appspot.com/o/avatars%2F${fileName}?alt=media`
 }
