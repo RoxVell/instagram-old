@@ -6,6 +6,7 @@
     :viewBox="viewbox"
     :aria-labelledby="name"
     role="presentation"
+    v-bind="$attrs"
   >
     <title :id="name" lang="en">{{ name }} icon</title>
     <g :fill="color">
