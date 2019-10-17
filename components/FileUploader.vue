@@ -1,22 +1,8 @@
 <template>
   <div class="upload-elements">
-    <div class="upload-formats">
-      <div class="format">
-        <span class="format-icon format-icon__photo"></span>
-        <div class="format-info">
-          <span class="format-title">High resolution images</span>
-          <span class="format-desc">PNG, JPG, GIF up to 10MB</span>
-        </div>
-      </div>
-
-      <div class="format">
-        <span class="format-icon format-icon__video"></span>
-        <div class="format-info">
-          <span class="format-title">Video</span>
-          <span class="format-desc">MP4 or WEBM, 4:3, 24 sec</span>
-        </div>
-      </div>
-    </div>
+    <header>
+      <slot name="header"></slot>
+    </header>
 
     <div class="upload-section" ref="uploadSectionRef">
       <div id="drop-mask" ref="dropMaskRef"></div>
@@ -52,22 +38,27 @@
             id="file"
             class="upload-media"
             type="file"
-            multiple
+            v-bind="$attrs"
             :accept="acceptFileFormats.map(f => f + '/*').join(',')"
             @change="selectFiles($event)"
           />
-          <label for="file">
-            <IconBase class="icon-upload" viewbox="0 0 486 486" width="100" height="100">
+          <label v-if="showUploadIcon" for="file">
+            <IconBase
+              class="icon-upload"
+              viewbox="0 0 486 486"
+              :width="uploadIconSize.width"
+              :height="uploadIconSize.height"
+            >
               <IconUpload />
             </IconBase>
           </label>
         </div>
 
         <div class="upload-section__description">
-          <p>Drag and drop to upload</p>
+          <p>Переместите файл для загрузки</p>
           <p>
-            or
-            <label for="file">browse</label> to choose a file
+            или
+            <label for="file">нажмите</label> для выбора файла
           </p>
         </div>
       </div>
@@ -92,6 +83,16 @@ export default {
       required: true,
       default() {
         return ['']
+      }
+    },
+    showUploadIcon: {
+      type: Boolean,
+      default: true
+    },
+    uploadIconSize: {
+      type: Object,
+      default() {
+        return { width: 100, height: 100 }
       }
     }
   },
