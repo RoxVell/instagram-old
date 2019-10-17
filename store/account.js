@@ -3,7 +3,8 @@ import { getDocuments } from '../utils/firebaseUtils'
 
 export const state = () => ({
   user: null,
-  isLoading: 'loading'
+  isLoading: 'loading',
+  avatar: ''
 })
 
 export const mutations = {
