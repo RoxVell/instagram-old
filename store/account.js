@@ -28,6 +28,9 @@ export const mutations = {
   },
   ADD_POST(state) {
     state.user.posts += 1
+  },
+  UPDATE_AVATAR(state, avatar) {
+    state.avatar = avatar
   }
 }
 
@@ -46,6 +49,23 @@ export const actions = {
     const user = getDocuments(userDoc)[0]
 
     return user || null
+  },
+  uploadAvatar({ state, commit }, blob) {
+    const uploadTask = storage.ref(`avatars/${state.user.username}.jpg`).put(blob)
+
+    uploadTask.then(() => {
+      commit('UPDATE_AVATAR', blob.src)
+    })
+
+    return { uploadTask }
+  },
+  deleteAvatar({ state, commit }) {
+    return storage
+      .ref(`avatars/${state.user.username}.jpg`)
+      .delete()
+      .then(() => {
+        commit('UPDATE_AVATAR', '')
+      })
   }
 }
 

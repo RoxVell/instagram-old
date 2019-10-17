@@ -1,0 +1,53 @@
+.upload-modal__body {
+  min-width: 400px;
+}
+
+.upload-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__text {
+    font-size: 15px;
+    font-weight: 600;
+    color: green;
+  }
+}
+
+.upload-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  button {
+    background-color: transparent;
+    color: #e0284f;
+    box-shadow: none;
+    border: 1px solid #e0284f;
+  }
+}
+
+.upload-section {
+  padding: 40px 0;
+}
+
+.upload-modal {
+  &__footer {
+    justify-content: flex-end;
+  }
+  .modal__wrapper {
+    max-height: 80vh;
+    overflow: auto;
+    // min-width: 400px !important;
+  }
+
+  &__choice {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.cropper {
+  width: 100%;
+  max-height: 500px;
+}

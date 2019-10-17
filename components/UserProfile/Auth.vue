@@ -6,7 +6,7 @@
         <div class="change-avatar-hint">Сменить аватар</div>
       </div>
     </template>
-      
+
     <template #username-section>
       <button
         class="btn btn_blue btn-edit"
@@ -24,12 +24,18 @@
         ></textarea>
       </div>
     </template>
-     
+
+    <AvatarChangeModal
+      v-model="changeAvatarShow"
+      @close="changeAvatarShow = false"
+      :transition="{name: 'appear-top'}"
+    ></AvatarChangeModal>
   </UserProfile>
 </template>
 
 <script>
 import UserProfile from '~/components/UserProfile/Default'
+import AvatarChangeModal from '~/components/Modals/AvatarChangeModal'
 import AuthUserAvatar from '~/components/Avatar/AuthUserAvatar'
 
 export default {
@@ -41,11 +47,13 @@ export default {
   },
   components: {
     UserProfile,
+    AvatarChangeModal,
     AuthUserAvatar
   },
   data() {
     return {
-      editMode: false
+      editMode: false,
+      changeAvatarShow: false
     }
   },
   methods: {
@@ -59,15 +67,11 @@ export default {
     saveProfileSettings() {
       console.log(`Сохранить настройки`)
       this.editMode = false
-    },
-    signOut() {
-      this.$store.dispatch('user/signOut')
-        .then(() => {
-          this.$router.replace('/')
-        })
-        .catch(console.log)
     }
   }
 }
 </script>
 
+<style lang="scss">
+@import '~/assets/scss/components/UserProfile/Auth.scss';
+</style>
