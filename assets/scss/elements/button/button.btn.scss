@@ -4,3 +4,7 @@ button.btn {
   border-radius: 4px;
   box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.13);
 }
+
+button.btn:disabled:not(.btn-loading) {
+  background-color: #c5c5c5;
+}

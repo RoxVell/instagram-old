@@ -10,7 +10,7 @@
       <slot></slot>
     </span>
     <IconBase v-if="loading" width="25" height="25" viewbox="0 0 100 100">
-      <IconSpinner color="white"></IconSpinner>
+      <IconSpinner :color="loadingColor"></IconSpinner>
     </IconBase>
   </button>
 </template>
@@ -24,6 +24,10 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    loadingColor: {
+      type: String,
+      default: 'white'
     }
   },
   components: {
