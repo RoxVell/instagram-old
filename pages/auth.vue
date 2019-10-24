@@ -15,6 +15,7 @@
 
 <script>
 export default {
+  middleware: 'authenticated',
   computed: {
     switchMessage() {
       switch (this.$nuxt.$route.name) {
