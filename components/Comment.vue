@@ -2,6 +2,7 @@
   <div class="comment-component" :class="{'no-likes': comment.likes === 0}">
     <div class="comment">
       <UserAvatar class="comment-avatar" :size="25" :username="comment.username" />
+
       <div class="comment-body">
         <div class="comment-username">
           <nuxt-link :to="comment.username">{{ comment.username }}</nuxt-link>
@@ -20,6 +21,7 @@
         </div>
 
         <p class="comment-text">{{ comment.text }}</p>
+
         <div class="comment-action">
           <div>
             <span class="comment-date">{{ comment.timeAgo }}</span>
@@ -43,13 +45,19 @@
         </div>
 
         <div v-if="comment.repliesCount" class="comment-subcomments">
-          <button
-            class="comment-subcomments__button"
-            @click="toggleReplies"
-          >{{ comment.isRepliesLoaded ? '― Скрыть ответы' : `― Посмотреть ответы (${comment.repliesCount})` }}</button>
+          <button class="comment-subcomments__button" @click="toggleReplies">
+            {{ comment.isRepliesLoaded ?
+            '― Скрыть ответы' :
+            `― Посмотреть ответы (${comment.repliesCount})` }}
+          </button>
           <div>
             <div v-if="showReplies">
-              <Comment v-for="comment in comment.replies" :comment="comment" :key="comment.id" />
+              <Comment
+                v-for="comment in comment.replies"
+                :comment="comment"
+                :key="comment.id"
+                @likeComment="$emit('likeComment', this.comment)"
+              />
             </div>
           </div>
         </div>
@@ -100,12 +108,6 @@ export default {
       repliesPaginate: null
     }
   },
-  watch: {
-    comment(newValue) {
-      console.log('Коммент изменился')
-      console.log(newValue)
-    }
-  },
   methods: {
     toggleReplies() {
       if (this.comment.isRepliesLoaded) {
@@ -140,7 +142,6 @@ export default {
     },
     async likeComment() {
       try {
-        // FIXME: likeComment function should take comment id and post id
         await this.$store.dispatch('comment/likeComment', this.comment)
         this.$emit('likeComment', this.comment)
       } catch (error) {
@@ -149,7 +150,6 @@ export default {
     },
     async unlikeComment() {
       try {
-        // FIXME: likeComment function should take comment id and post id
         await this.$store.dispatch('comment/unlikeComment', this.comment)
         this.$emit('unlikeComment', this.comment)
       } catch (error) {
@@ -158,10 +158,7 @@ export default {
     },
     async deleteComment() {
       try {
-        await this.$store.dispatch('comment/deleteComment', {
-          commentId: this.comment.id,
-          postId: this.postId
-        })
+        await this.$store.dispatch('comment/deleteComment', this.comment)
         this.$emit('deleteComment', this.comment)
       } catch (error) {
         console.error(error)

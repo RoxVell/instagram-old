@@ -10,7 +10,8 @@ export const actions = {
     const createComment = functions.httpsCallable('addComment')
     return createComment(data)
   },
-  deleteComment(_, { commentId, postId }) {
+  deleteComment(_, comment) {
+    const { id: commentId, postId } = comment
     return firestore.doc(`post_comments/${postId}/comments/${commentId}`).delete()
   },
   loadReplies({}, { postId, commentId, cb }) {
@@ -30,36 +31,28 @@ export const actions = {
   likeComment({ rootState }, comment) {
     if (!rootState.account.user) throw Error('Authorization required')
 
-    const { id, post_id } = comment
+    const { id, postId } = comment
 
     return firestore
-      .collection('comments_likes')
-      .doc(post_id)
-      .collection(rootState.account.user.username)
-      .doc(String(id))
+      .doc(`comments_likes/${postId}/${rootState.account.user.username}/${id}`)
       .set({})
   },
   unlikeComment({ rootState }, comment) {
     if (!rootState.account.user) throw Error('Authorization required')
 
-    const { id, post_id } = comment
+    const { id, postId } = comment
 
     return firestore
-      .collection('comments_likes')
-      .doc(post_id)
-      .collection(rootState.account.user.username)
-      .doc(String(id))
+      .doc(`comments_likes/${postId}/${rootState.account.user.username}/${id}`)
       .delete()
   },
-  getCommentsLikes({ rootState }, post_id) {
+  getCommentsLikes({ rootState }, postId) {
     return firestore
-      .collection('comments_likes')
-      .doc(post_id)
-      .collection(rootState.account.user.username)
+      .collection(`comments_likes/${postId}/${rootState.account.user.username}`)
       .get()
       .then((response) => {
-        const likesIDs = new Map()
-        for (let snapshot of response.docs) likesIDs.set(snapshot.id)
+        const likesIDs = new Set()
+        for (let snapshot of response.docs) likesIDs.add(snapshot.id)
         return likesIDs
       })
   }
