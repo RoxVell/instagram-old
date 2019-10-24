@@ -1,0 +1,115 @@
+.profile-section {
+  display: flex;
+  margin-bottom: 50px;
+  padding-left: 50px;
+}
+
+.profile-section__avatar {
+  margin-right: 50px;
+}
+
+.profile-section__username {
+  font-weight: 300;
+  font-size: 28px;
+}
+
+.profile-section__user-info div {
+  margin-top: 20px;
+}
+
+.profile-stats {
+  display: flex;
+}
+
+.profile-stats > li:not(:last-child) {
+  margin-right: 35px;
+}
+
+.profile-stats__count {
+  font-weight: 500;
+}
+
+.profile-settings {
+  display: flex;
+
+  button.btn {
+    padding: 5px 15px;
+    font-size: 14px;
+    transition: all 0.3s;
+  }
+
+  > *:not(:first-child) {
+    margin-left: 25px;
+  }
+}
+
+.profile-description textarea.default {
+  background: none;
+  border: none;
+  resize: none;
+  font-size: 14px;
+}
+
+.profile.edit button.btn-edit {
+  background: #68be77;
+  color: white;
+}
+
+.profile.edit textarea {
+  resize: both;
+  height: auto;
+}
+
+@media screen and (max-width: 600px) {
+  .posts-section {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-settings {
+    justify-content: space-around;
+  }
+
+  .profile-section__user-info {
+    margin-top: 20px;
+  }
+
+  .profile-stats {
+    justify-content: space-between;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .posts-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 510px) {
+  .search-component {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .profile-section {
+    padding-left: 10px;
+    padding-right: 10px;
+    justify-content: space-around;
+  }
+
+  .profile-settings {
+    margin-top: 0;
+  }
+
+  img.profile-section__avatar {
+    width: 20%;
+    height: 20%;
+    margin-right: 0;
+  }
+}
