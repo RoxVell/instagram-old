@@ -7,7 +7,7 @@
     <div class="upload-section" ref="uploadSectionRef">
       <div id="drop-mask" ref="dropMaskRef"></div>
       <div key="1" v-if="files && files.length !== 0" class="upload-section__images">
-        <div class="images" v-if="files.length !== 0">
+        <div class="images">
           <transition-group name="flip-list">
             <div
               class="images-item"
@@ -16,9 +16,9 @@
               :itemOrder="index"
               draggable="true"
               @dragstart="handleDragStart($event)"
-              @drop="handleDragDrop($event)"
-              @dragend="handleDragEnd($event)"
               @dragleave="handleDragLeave($event)"
+              @dragend="handleDragEnd($event)"
+              @drop="handleDragDrop($event)"
             >
               <div class="images-drop-mask" @dragenter="handleDragEnter($event)"></div>
               <div class="images-item__picture" :style="{ backgroundImage: `url(${image.src})`}"></div>
@@ -69,6 +69,7 @@
 <script>
 import IconBase from '~/components/Icons/IconBase'
 import IconUpload from '~/components/Icons/IconUpload'
+import { swapArrayElement } from '~/utils/index.js'
 
 export default {
   props: {
@@ -111,12 +112,21 @@ export default {
     }
   },
   methods: {
+    handleDragStart(event) {
+      this.currentItem = event.target
+      this.toggleDropMaskShow(true)
+      event.target.classList.add('drag')
+    },
+    handleDragLeave(event) {
+      event.target.parentNode.style.borderTopColor = ''
+    },
+    handleDragEnter(event) {
+      const currentTargetItem = event.target.parentNode
+      currentTargetItem.style.borderTopColor = '#0366D6'
+    },
     handleDragEnd(event) {
       event.target.classList.remove('drag')
-
-      const dropItemMasks = Array.from(document.querySelectorAll('.images-drop-mask'))
-      dropItemMasks.forEach((item) => (item.style.display = 'none'))
-
+      this.toggleDropMaskShow(false)
       this.currentItem = null
     },
     handleDragDrop(event) {
@@ -125,56 +135,33 @@ export default {
       const changeItemOrder = this.currentItem.attributes['itemorder'].value
 
       if (!changeItem.isSameNode(this.currentItem)) {
-        this.swapElement(this.files, selectedItemOrder, changeItemOrder)
+        swapArrayElement.call(this, this.files, selectedItemOrder, changeItemOrder)
       }
 
       changeItem.style.borderTopColor = ''
       this.currentItem = null
     },
-    handleDragStart(event) {
-      this.currentItem = event.target
-
+    toggleDropMaskShow(isShow) {
       document
         .querySelectorAll('.images-drop-mask')
-        .forEach((item) => (item.style.display = 'block'))
-
-      event.target.classList.add('drag')
-    },
-    handleDragEnter(event) {
-      const currentTargetItem = event.target.parentNode
-      currentTargetItem.style.borderTopColor = '#0366D6'
-      const items = document.querySelectorAll('div.images-item')
-    },
-    handleDragLeave(event) {
-      event.target.parentNode.style.borderTopColor = ''
+        .forEach((item) => (item.style.display = isShow ? 'block' : 'none'))
     },
     selectFiles(event) {
-      const files = Array.from(
-        event.type === 'change' ? event.target.files : event.dataTransfer.files
-      )
-
-      const isFilesFormats = files.every((file) => {
-        return this.acceptFileFormats.some((format) => file.type.startsWith(format))
-      })
-
-      if (isFilesFormats) {
-        const media = files.map((file) => {
-          return {
-            name: file.name,
-            src: window.URL.createObjectURL(file)
-          }
-        })
-
-        this.files.push(...media)
-      } else {
-        // TODO: wrong formats
-      }
+      const files = this.getFilesFromEvent(event)
+      const storedFiles = files.filter(this.isValidFileFormat).map(this.transformFilesToBlob)
+      if (storedFiles.length) this.files.push(...storedFiles)
     },
-    swapElement(arr, oldIndex, newIndex) {
-      const temp0 = arr[oldIndex]
-      const temp1 = arr[newIndex]
-      this.$set(arr, newIndex, temp0)
-      this.$set(arr, oldIndex, temp1)
+    getFilesFromEvent(event) {
+      return Array.from(event.type === 'change' ? event.target.files : event.dataTransfer.files)
+    },
+    isValidFileFormat(file) {
+      return this.acceptFileFormats.some((format) => file.type.startsWith(format))
+    },
+    transformFilesToBlob(file) {
+      const fileName = file.name
+      const fileImage = window.URL.createObjectURL(file)
+
+      return { name: fileName, src: fileImage }
     },
     deleteFile(index) {
       this.files.splice(index, 1)
@@ -185,10 +172,7 @@ export default {
 
       uploadSection.ondragover = (event) => event.preventDefault()
 
-      dropMask.ondragleave = (event) => {
-        dropMask.style.display = 'none'
-        uploadSection.classList.remove('drag-active')
-      }
+      uploadSection.ondrop = (event) => event.preventDefault()
 
       uploadSection.ondragenter = (event) => {
         if (this.containsFiles(event)) {
@@ -197,7 +181,10 @@ export default {
         }
       }
 
-      uploadSection.ondrop = (event) => event.preventDefault()
+      dropMask.ondragleave = (event) => {
+        dropMask.style.display = 'none'
+        uploadSection.classList.remove('drag-active')
+      }
 
       dropMask.ondrop = (event) => {
         event.preventDefault()

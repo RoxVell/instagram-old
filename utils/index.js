@@ -131,3 +131,11 @@ export function scrollHandler(heightHandler, callback) {
 
   isHandlable && callback()
 }
+
+// Swap array elements inside Vue instance
+export function swapArrayElement(arr, oldIndex, newIndex) {
+  const temp0 = arr[oldIndex]
+  const temp1 = arr[newIndex]
+  this.$set(arr, newIndex, temp0)
+  this.$set(arr, oldIndex, temp1)
+}
