@@ -2,7 +2,7 @@
   <div class="comment-component comment-component-owner">
     <div class="user-info">
       <div class="user-avatar">
-        <AuthUserAvatar />
+        <UserAvatar :username="post.username" />
       </div>
       <div class="user-comment">
         <p class="comment-username">{{ post.username }}</p>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import AuthUserAvatar from '~/components/Avatar/AuthUserAvatar'
+import UserAvatar from '~/components/Avatar/UserAvatar'
 import { computeTimeAgo } from '~/utils/index'
 
 export default {
@@ -32,7 +32,7 @@ export default {
     }
   },
   components: {
-    AuthUserAvatar
+    UserAvatar
   }
 }
 </script>

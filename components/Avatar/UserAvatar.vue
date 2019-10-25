@@ -2,8 +2,8 @@
   <img
     :src="avatarUrl"
     :style="avatarStyle"
-    ref="avatarImg"
     :alt="`${username} user avatar`"
+    ref="avatarImg"
     v-bind="$attrs"
   />
 </template>
@@ -26,9 +26,7 @@ export default {
   computed: {
     avatarUrl() {
       // If image prop is passed then it will be used as avatar
-      if (this.image) return this.image
-
-      return getUserAvatar(this.username)
+      return this.image ? this.image : getUserAvatar(this.username)
     },
     avatarStyle() {
       const styles = {}
