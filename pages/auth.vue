@@ -15,7 +15,6 @@
 
 <script>
 export default {
-  middleware: 'authenticated',
   computed: {
     switchMessage() {
       switch (this.$nuxt.$route.name) {
@@ -45,6 +44,9 @@ export default {
     isAuth() {
       return this.$store.getters['account/isAuth']
     }
+  },
+  created() {
+    if (this.isAuth) this.$router.push({ path: '/' })
   }
 }
 </script>
