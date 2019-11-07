@@ -95,28 +95,19 @@ export function isDateEqual(timestampA, timestampB) {
   )
 }
 
-export function lazyLoadImages(imgLazyClass = 'lazy') {
-  let lazyImages = Array.from(document.querySelectorAll(`img.${imgLazyClass}`))
+export function lazyLoadImageObserver(options) {
+  if (!('IntersectionObserver' in window)) return // Possibly fall back to a more compatible method here
 
-  console.log(`Найдено ${lazyImages.length} ленивых изображений`, `img.${imgLazyClass}`)
-
-  if ('IntersectionObserver' in window) {
-    let lazyImageObserver = new IntersectionObserver((entries, observer) => {
+  return new IntersectionObserver((entries, observer) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          let lazyImage = entry.target
-          lazyImage.src = lazyImage.dataset.src
-          if (lazyImage.dataset.srcset) lazyImage.srcset = lazyImage.dataset.srcset
-          lazyImage.classList.remove(imgLazyClass)
-          lazyImageObserver.unobserve(lazyImage)
-        }
-      })
-    })
+      if (!entry.isIntersecting) return
 
-    lazyImages.forEach((lazyImage) => lazyImageObserver.observe(lazyImage))
-  } else {
-    // Possibly fall back to a more compatible method here
-  }
+      let target = entry.target
+      target.src = target.dataset.src
+      if (target.dataset.srcset) target.srcset = target.dataset.srcset
+      observer.unobserve(target)
+    })
+  }, options)
 }
 
 export function isComponent(vnode, componentName) {

@@ -1,36 +1,60 @@
 <template>
   <section class="profile container">
-
-    <AuthUserProfile v-if="profileType === PROFILE_TYPES['myProfile']" :user="user" />
-    <OtherUserProfile v-if="profileType === PROFILE_TYPES['otherProfile']" :user="user" />
-    <UserNotFound v-if="profileType === PROFILE_TYPES['userNotFound']" :username="this.$route.params.id || ''"/>
+    <component :is="profileType" :user="user" />
 
     <Gallery class="posts-section">
-      <ProfilePost class="gallery-item" v-for="(post, index) in posts" :key="index" :post="post"/>
+      <ProfilePost
+        class="gallery-item"
+        v-for="(post, index) in posts"
+        :key="index"
+        :post="post"
+        @click="showPost(post)"
+        @postCreated="observeLazyImage"
+      />
     </Gallery>
 
+    <Modal class="post-modal" @close="isPostShow = false" v-model="isPostShow" :noBorder="true">
+      <Post :postOwner="user" :post="currentPost"></Post>
+    </Modal>
   </section>
 </template>
 
 <script>
-import AuthUserProfile from '~/components/UserProfile/Auth'
-import OtherUserProfile from '~/components/UserProfile/Other'
-import UserNotFound from '~/components/UserProfile/UserNotFound'
-import { ProfilePageMixin, PROFILE_TYPES } from '~/mixins/ProfilePageMixin'
+import { ProfilePageMixin } from '~/mixins/ProfilePageMixin'
+import { lazyLoadImageObserver } from '~/utils/index.js'
+import Modal from '~/components/Modal'
 
 export default {
   mixins: [ProfilePageMixin],
   components: {
-    AuthUserProfile,
-    OtherUserProfile,
-    UserNotFound
+    AuthUserProfile: () => import('~/components/UserProfile/Auth'),
+    UserNotFound: () => import('~/components/UserProfile/UserNotFound'),
+    OtherUserProfile: () => import('~/components/UserProfile/Other'),
+    Post: () => import('~/components/Post/Post'),
+    Modal: () => import('~/components/Modal')
   },
   data() {
     return {
-      user: null,
+      currentPost: null,
+      isPostShow: false,
       isMyProfile: null,
-      PROFILE_TYPES
+      lazyImageObserver: null
     }
+  },
+  methods: {
+    showPost(post) {
+      this.isPostShow = true
+      this.currentPost = post
+    },
+    observeLazyImage(image) {
+      this.lazyImageObserver.observe(image)
+    },
+    initLazyImageObserver() {
+      this.lazyImageObserver = lazyLoadImageObserver()
+    }
+  },
+  created() {
+    this.initLazyImageObserver()
   }
 }
 </script>

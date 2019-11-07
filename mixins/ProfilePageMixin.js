@@ -3,9 +3,9 @@ import ProfilePost from '~/components/ProfilePost'
 import Gallery from '~/components/Gallery'
 
 const PROFILE_TYPES = {
-  myProfile: 'my-profile',
-  otherProfile: 'other-profile',
-  userNotFound: 'user-not-found'
+  myProfile: 'AuthUserProfile',
+  otherProfile: 'OtherUserProfile',
+  userNotFound: 'UserNotFound'
 }
 
 const ProfilePageMixin = {
