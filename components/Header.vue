@@ -11,27 +11,27 @@
         <nav>
           <ul class="header-menu">
             <template v-if="user">
-              <nuxt-link to="/upload" class="btn" tag="li">
+              <nuxt-link to="/upload" class="header-menu__item" tag="a">
                 <img
-                  style="width: 18px; margin-right: 7px;"
+                  class="header-item__icon header-item__icon_upload"
                   src="/images/icons/upload-min.png"
                   alt="upload icon"
                 />
                 <span>Добавить фото</span>
               </nuxt-link>
 
-              <nuxt-link :to="`/user/${user.username}`" tag="li">
-                <AuthUserAvatar class="user-avatar" :size="30" />
+              <nuxt-link :to="`/user/${user.username}`" class="header-menu__item" tag="a">
+                <AuthUserAvatar class="header-item__icon" :size="30" />
                 <span>{{ user.username }}</span>
               </nuxt-link>
 
-              <li class="header-menu__break"></li>
-              <li @click="signOut">Выйти</li>
+              <a class="header-menu__item header-menu__break"></a>
+              <a class="header-menu__item" @click="signOut">Выйти</a>
             </template>
 
             <template v-else>
-              <nuxt-link to="/auth/login" tag="li">Войти</nuxt-link>
-              <nuxt-link to="/auth/signup" tag="li">Зарегистрироваться</nuxt-link>
+              <nuxt-link to="/auth/login" class="header-menu__item" tag="a">Войти</nuxt-link>
+              <nuxt-link to="/auth/signup" class="header-menu__item" tag="a">Зарегистрироваться</nuxt-link>
             </template>
           </ul>
         </nav>
@@ -56,13 +56,9 @@ export default {
     user: (state) => state.account.user
   }),
   methods: {
-    signOut() {
-      this.$store
-        .dispatch('auth/signOut')
-        .then(() => {
+    async signOut() {
+      await this.$store.dispatch('auth/signOut')
           this.$router.replace('/')
-        })
-        .catch(console.log)
     }
   }
 }

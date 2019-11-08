@@ -1,7 +1,6 @@
 header {
   background: #fff;
   padding: 15px 0;
-  // box-shadow: 0px 1px 1px 1px #eee;
   box-shadow: 0px 1px 12px 0px rgba(210, 210, 210, 0.48);
   border-bottom: 1px solid #c1c1c18c;
 }
@@ -12,30 +11,11 @@ header {
   align-items: center;
 }
 
-.header-menu {
-  display: flex;
-}
-
 .logo {
   width: 35px;
   height: 35px;
   background-image: url('~static/images/icons/instagram.svg');
   background-repeat: no-repeat;
-}
-
-.header-menu__item {
-  width: 20px;
-  height: 20px;
-  background-position: center;
-  background-size: cover;
-}
-
-.header-menu__item:not(:last-child) {
-  margin-right: 25px;
-}
-
-.header-icon-active {
-  fill: black;
 }
 
 // user auth
@@ -57,10 +37,6 @@ ul.auth {
   align-items: center;
 }
 
-.user-section .user-avatar {
-  margin-right: 10px;
-}
-
 .header-auth {
   height: 64px;
   font-size: 14px;
@@ -76,7 +52,7 @@ ul.auth {
   align-items: center;
   color: #000;
 
-  li {
+  &__item {
     display: flex;
     align-items: center;
     height: 100%;
@@ -94,10 +70,13 @@ ul.auth {
     height: 30px !important;
     background-color: #eee;
     padding: 0 !important;
-    // margin-right: 22px;
   }
 }
 
-.header-auth a:not(:last-child) {
-  margin-right: 22px;
+.header-item__icon {
+  margin-right: 10px;
+
+  &_upload {
+    width: 18px;
+  }
 }
