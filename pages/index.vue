@@ -1,37 +1,20 @@
 <template>
-  <section>
-    <button class="btn" @click="open">Open modal</button>
-    <Modal :show="show" @click="close">
-      <p>Something</p>
-    </Modal>
-  </section>
+  <section class="main-page container"></section>
 </template>
 
 <script>
-import Modal from '~/components/Modal'
-
 export default {
-  components: {
-    Modal
-  },
+  components: {},
   data() {
-    return {
-      show: false
-    }
+    return {}
   },
   methods: {
-    close() {
-      this.show = false
-    },
-    open() {
-      this.show = true
-    }
-  }
+    next() {},
+    back() {}
+  },
+  created() {}
 }
 </script>
 
-<style>
-.main-container {
-  padding: 0 50px;
-}
+<style lang="scss" scoped>
 </style>

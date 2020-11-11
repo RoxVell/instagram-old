@@ -1,0 +1,152 @@
+@import '~/assets/scss/vars/_colors';
+
+$comments-section-width: 300px;
+
+.post-component {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr $comments-section-width;
+  grid-template-rows: minmax(0, 1fr);
+  justify-content: center;
+  max-width: 95vw;
+  min-height: 60vh;
+  max-height: 90vh;
+  flex-grow: 1;
+
+  // There is a problem with max-height and flexbox: flexbox misbehaving with max-height
+  > * {
+    flex: 0 0 auto;
+  }
+
+  .post-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-height: inherit;
+    background: black;
+
+    img {
+      max-width: 100%;
+      max-height: inherit;
+    }
+  }
+
+  .post-comments {
+    width: $comments-section-width;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    align-items: end;
+    grid-template-rows: 1fr auto;
+
+    .users-comments {
+      align-self: flex-start;
+      position: relative;
+      max-height: 100%;
+      width: 100%;
+      overflow: auto;
+
+      .comment-component:last-child .user-info {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.add-comment {
+  display: flex;
+  justify-content: stretch;
+  // background-color: #f9f9f9;
+  border-top: 1px solid #e1e1e1;
+
+  &__avatar {
+    flex: 35px 1 0;
+    width: 35px;
+    height: 35px;
+    margin-right: 8px;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__text {
+    flex-grow: 1;
+  }
+
+  &__input {
+    width: 100%;
+    resize: none;
+    font-size: 14px;
+    padding: 15px;
+    border: none;
+    border-radius: 4px;
+    max-height: 200px;
+  }
+}
+
+div.comment-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-top: 1px solid #e7e8ec;
+
+  & > div {
+    display: flex;
+  }
+}
+
+.comment-actions__item {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  cursor: pointer;
+
+  span {
+    margin-left: 5px;
+    font-weight: 600;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &-like {
+    &_liked {
+      path {
+        fill: $color-red-light;
+        stroke: $color-red-light;
+      }
+
+      span {
+        color: $color-red-light;
+      }
+    }
+  }
+
+  &-bookmark {
+    fill: transparent;
+
+    &_saved {
+      path:first-child {
+        fill: black;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .post-component {
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+  }
+
+  .post-comments {
+    position: static !important;
+    width: 100% !important;
+  }
+}

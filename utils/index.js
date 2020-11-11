@@ -99,7 +99,7 @@ export function lazyLoadImageObserver(options) {
   if (!('IntersectionObserver' in window)) return // Possibly fall back to a more compatible method here
 
   return new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
+    entries.forEach((entry) => {
       if (!entry.isIntersecting) return
 
       let target = entry.target
@@ -129,4 +129,9 @@ export function swapArrayElement(arr, oldIndex, newIndex) {
   const temp1 = arr[newIndex]
   this.$set(arr, newIndex, temp0)
   this.$set(arr, oldIndex, temp1)
+}
+
+export function autoResizeTextarea(target, additionalHeight = 0) {
+  target.style.height = 'auto'
+  target.style.height = target.scrollHeight + additionalHeight + 'px'
 }

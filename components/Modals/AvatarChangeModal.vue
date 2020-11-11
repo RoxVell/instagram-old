@@ -38,17 +38,15 @@
           ></Cropper>
         </template>
 
-        <template v-else>
-          <!-- <div class="upload-modal__choice"> -->
-          <FileUploader
-            :acceptFileFormats="['image']"
-            @updateFileList="updateUploadImage"
-            :showUploadIcon="false"
-          ></FileUploader>
-          <!-- </div> -->
-        </template>
+        <FileUploader
+          v-else
+          :showUploadIcon="false"
+          :acceptFileFormats="['image']"
+          @updateFileList="updateUploadImage"
+        ></FileUploader>
       </template>
     </div>
+
     <template class="upload-modal__footer" #footer>
       <template v-if="imageToUpload && !loadingStatus">
         <button
@@ -135,7 +133,9 @@ export default {
           (snapshot) => {
             this.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           },
-          (error) => {},
+          (error) => {
+            this.loadingStatus = false
+          },
           () => {
             this.loadingStatus = 'loaded'
             this.$emit('avatarChange', this.blobImage.src)

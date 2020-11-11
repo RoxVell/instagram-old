@@ -6,7 +6,7 @@
     <div class="post-comments">
       <div class="users-comments" ref="usersComments">
         <CommentOwner :postOwner="postOwner" :post="post" />
-        <transition-group name="disapear">
+        <transition-group name="disapear-to-center">
           <Comment
             v-for="comment in comments"
             :key="comment.id"
@@ -22,7 +22,7 @@
           <div
             class="comment-actions__item comment-actions__item-like"
             :class="{ 'comment-actions__item-like_liked': post.isLiked }"
-            @click="toggleLikePost"
+            ref="likePostRef"
           >
             <IconBase :viewbox="likeLoading ? '0 0 100 100' : '0 0 50 50'" width="25" height="25">
               <IconSpinner v-if="likeLoading" />
@@ -43,7 +43,7 @@
           <div
             class="comment-actions__item comment-actions__item-bookmark"
             :class="{ 'comment-actions__item-bookmark_saved': post.isSaved }"
-            @click="toggleSavePost"
+            ref="savePostRef"
           >
             <IconBase
               :viewbox="saveLoading ? '0 0 100 100' : '0 0 60 60'"
@@ -61,13 +61,13 @@
 
       <div v-if="isAuth" class="add-comment">
         <textarea
+          ref="addCommentRef"
           class="add-comment__input"
           v-model="commentText"
           :disabled="commentAdding"
           placeholder="Добавьте свой комментарий"
           rows="1"
-          @input="resizeComment"
-          @keypress="addComment"
+          @input="autoResizeTextarea($event.target)"
         ></textarea>
       </div>
     </div>
@@ -83,8 +83,10 @@ import IconLike from '~/components/Icons/IconLike'
 import IconComments from '~/components/Icons/IconComments'
 import IconBookmark from '~/components/Icons/IconBookmark'
 import IconSpinner from '~/components/Icons/IconSpinner'
-import { computeTimeAgo } from '~/utils/index'
+import { computeTimeAgo, autoResizeTextarea } from '~/utils/index'
 import { mapState, mapGetters } from 'vuex'
+
+const ENTER_KEY_CODE = 13
 
 export default {
   props: {
@@ -138,6 +140,7 @@ export default {
     }
   },
   methods: {
+    autoResizeTextarea,
     async loadReplies(commentId) {
       try {
         const currentComment = this.comments.find((comment) => comment.id === commentId)
@@ -159,47 +162,36 @@ export default {
         console.error(error)
       }
     },
-    async addComment(event) {
-      if (event.keyCode === 13 && event.shiftKey && this.commentText) {
-        event.preventDefault()
-        this.commentAdding = true
+    // async addComment(event) {
+    //   if (event.keyCode === ENTER_KEY_CODE && event.shiftKey && this.commentText) {
+    //     event.preventDefault()
+    //     this.commentAdding = true
 
-        try {
-          let { data: comment } = await this.$store.dispatch('comment/addComment', {
-            text: this.commentText,
-            postId: this.post.id
-          })
+    //     try {
+    //       let { data: comment } = await this.$store.dispatch('comment/addComment', {
+    //         text: this.commentText,
+    //         postId: this.post.id
+    //       })
+    //     } catch (error) {
+    //       console.error(error)
+    //     }
 
-          // this.onAddComment(comment)
-        } catch (error) {
-          console.error(error)
-        }
-
-        this.commentAdding = false
-      }
-    },
+    //     this.commentAdding = false
+    //   }
+    // },
     onAddReply(replies, commentId) {
       replies = this.handleComments(replies, this.defaultCommentHandlers)
-
       const comment = this.comments.find((comment) => comment.id === commentId)
-
       comment.isRepliesLoaded = true
-
       comment.replies.push(...replies)
     },
     onAddComment(comment) {
-      console.log(this.defaultCommentHandlers)
       comment = this.handleComments([comment], this.defaultCommentHandlers)[0]
       comment.replies = []
       comment.isRepliesLoading = false
       comment.isRepliesLoaded = false
 
       this.comments.push(comment)
-    },
-    resizeComment(event) {
-      const textarea = event.target
-      textarea.style.height = 'auto'
-      textarea.style.height = textarea.scrollHeight + 'px'
     },
     async getComments() {
       this.commentsLoading = true
@@ -271,85 +263,6 @@ export default {
         this.getComments()
       }
     },
-    toggleLikePost() {
-      this.post.isLiked ? this.unlikePost() : this.likePost()
-    },
-    async likePost() {
-      this.likeLoading = true
-
-      try {
-        await this.$store.dispatch('post/like', this.post.id)
-        this.post.isLiked = true
-        this.post.likes += 1
-      } catch (error) {
-        console.error(error)
-      }
-
-      this.likeLoading = false
-    },
-    async unlikePost() {
-      this.likeLoading = true
-
-      try {
-        await this.$store.dispatch('post/unlike', this.post.id)
-        this.post.isLiked = false
-        this.post.likes -= 1
-      } catch (error) {
-        console.error(error)
-      }
-
-      this.likeLoading = false
-    },
-    async checkPostIsLiked() {
-      this.likeLoading = true
-
-      try {
-        this.post.isLiked = await this.$store.dispatch('post/isLiked', this.post.id)
-      } catch (error) {
-        console.error(error)
-      }
-
-      this.likeLoading = false
-    },
-    async checkPostIsSaved() {
-      this.saveLoading = true
-
-      try {
-        this.post.isSaved = await this.$store.dispatch('post/isSaved', this.post.id)
-      } catch (error) {
-        console.error(error)
-      }
-
-      this.saveLoading = false
-    },
-    toggleSavePost() {
-      if (this.post.isSaved) this.unsavePost()
-      else this.savePost()
-    },
-    async savePost() {
-      this.saveLoading = true
-
-      try {
-        await this.$store.dispatch('post/save', this.post.id)
-        this.post.isSaved = true
-      } catch (error) {
-        console.error(error)
-      }
-
-      this.saveLoading = false
-    },
-    async unsavePost() {
-      this.saveLoading = true
-
-      try {
-        await this.$store.dispatch('post/unsave', this.post.id)
-        this.post.isSaved = false
-      } catch (error) {
-        console.error(error)
-      }
-
-      this.saveLoading = false
-    },
     handleCommentActions(snapshot) {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
@@ -367,6 +280,16 @@ export default {
           console.log('Removed: ', change.doc.id)
         }
       })
+    },
+    async injectAuthActions() {
+      const module = await import('./postAuthActions')
+      for (let key in module) this[key] = module[key].bind(this)
+      this.setupListenersForReferences()
+    },
+    setupListenersForReferences() {
+      this.$refs.savePostRef.onclick = this.toggleSavePost
+      this.$refs.likePostRef.onclick = this.toggleLikePost
+      this.$refs.addCommentRef.onkeydown = this.addComment
     }
   },
   beforeDestroy() {
@@ -376,14 +299,6 @@ export default {
     this.scrollbar = null
   },
   mounted() {
-    console.log(this.mixins)
-
-    // import('./test').then((module) => {
-    //   for (let key in module) {
-    //     this[key] = module[key]
-    //   }
-    // })
-
     const container = this.$refs.usersComments
     const scrollbar = new PerfectScrollbar(container)
     container.addEventListener('ps-scroll-y', this.scrollHandler)
@@ -393,6 +308,7 @@ export default {
     this.handleTimeAgo(this.post)
 
     if (this.isAuth) {
+      await this.injectAuthActions()
       await Promise.all([this.checkPostIsLiked(), this.checkPostIsSaved()])
       await this.getCommentsLikes()
     }
@@ -409,36 +325,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '~/assets/scss/components/PostModal.scss';
+@import '~/assets/scss/components/Post.scss';
+@import '~/assets/scss/transitions/disapear-to-center.scss';
 @import 'perfect-scrollbar/css/perfect-scrollbar.css';
-
-.disapear {
-  &-enter {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
-
-  &-enter-active {
-    transition: all 300ms ease-in-out;
-  }
-
-  &-enter-to {
-    opacity: 1;
-    transform: none;
-  }
-
-  &-leave {
-    opacity: 1;
-  }
-
-  &-leave-active {
-    perspective: 100px;
-    transition: all 0.5s cubic-bezier(0.36, -0.64, 0.34, 1.76);
-  }
-
-  &-leave-to {
-    transform: rotateX(-90deg);
-    opacity: 0;
-  }
-}
 </style>

@@ -1,5 +1,5 @@
 import { firestore, functions } from '~/firebase/init'
-import { QueryPaginate } from '../utils/firebaseUtils.ts'
+import { QueryPaginate } from '../utils/firebaseUtils'
 
 export const state = () => ({})
 

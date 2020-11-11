@@ -1,4 +1,4 @@
-import { auth, firestore } from '~/firebase/init'
+import { auth, firestore, storage } from '~/firebase/init'
 import { getDocuments } from '../utils/firebaseUtils'
 
 export const state = () => ({
@@ -14,7 +14,7 @@ export const mutations = {
       state.isLoading = { status: 'not-auth' }
     } else {
       firestore
-        .doc(`users/${auth.currentUser.uid}`)
+        .doc(`users/${auth.currentUser.displayName}`)
         .get()
         .then((userDocument) => {
           if (userDocument.exists) {
@@ -32,6 +32,9 @@ export const mutations = {
   },
   UPDATE_AVATAR(state, avatar) {
     state.avatar = avatar
+  },
+  UPDATE_FOLLOWING_COUNT(state, count) {
+    state.user.following += count
   }
 }
 
@@ -41,14 +44,11 @@ export const actions = {
     return !docs
   },
   async getUser(_, username) {
-    const userDoc = await firestore
-      .collection('users')
-      .where('username', '==', username)
-      .limit(1)
-      .get()
+    const userDoc = await firestore.doc(`users/${username}`).get()
 
-    const user = getDocuments(userDoc)[0]
+    if (!userDoc.exists) return null
 
+    const user = getDocuments([userDoc])[0]
     return user || null
   },
   uploadAvatar({ state, commit }, blob) {
@@ -71,5 +71,5 @@ export const actions = {
 }
 
 export const getters = {
-  isAuth: (state) => state.user !== null
+  isAuth: (state) => state.isLoading.status === 'auth'
 }

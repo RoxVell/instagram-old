@@ -1,0 +1,26 @@
+.lazy-loading {
+  opacity: 0.5;
+  background: linear-gradient(
+    45deg,
+    rgba(211, 223, 232, 1) 30%,
+    rgba(169, 184, 197, 1) 38%,
+    rgba(168, 182, 193, 1) 41%,
+    rgba(168, 182, 193, 1) 50%,
+    rgba(168, 182, 193, 1) 50%,
+    rgba(169, 184, 197, 1) 51%,
+    rgba(211, 223, 232, 1) 57%,
+    rgba(211, 223, 232, 1) 80%,
+    rgba(211, 223, 232, 1) 80%
+  );
+  background-size: 1200% 1200%;
+  animation: LazyLoadingAnimation 2s ease infinite reverse;
+}
+
+@keyframes LazyLoadingAnimation {
+  0% {
+    background-position: 0% 92%;
+  }
+  100% {
+    background-position: 100% 9%;
+  }
+}

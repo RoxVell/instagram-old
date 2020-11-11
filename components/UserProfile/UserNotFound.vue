@@ -6,11 +6,8 @@
 
 <script>
 export default {
-  props: {
-    username: {
-      type: String,
-      required: true
-    }
+  beforeMount() {
+    this.username = this.$route.params.id
   }
 }
 </script>

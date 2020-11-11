@@ -7,16 +7,6 @@ $spinner-size: 45px;
   align-items: center;
   height: 100vh;
 
-  .spinner-icon {
-    display: block;
-    width: $spinner-size;
-    height: $spinner-size;
-    background-image: url('~static/images/icons/spinner.svg');
-    background-repeat: no-repeat;
-    background-size: $spinner-size;
-    margin-right: 10px;
-  }
-
   .spinner-text {
     font-size: 20px;
     color: #373737;

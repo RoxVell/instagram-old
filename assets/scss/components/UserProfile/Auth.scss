@@ -1,0 +1,35 @@
+@import '~/assets/scss/elements/button/button.btn.scss';
+@import '~/assets/scss/elements/button/button.btn_blue.scss';
+@import '~/assets/scss/elements/button/button.btn_red.scss';
+
+.user-avatar__change {
+  position: relative;
+  margin-right: 50px;
+  overflow: hidden;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &:hover .change-avatar-hint {
+    transform: translateY(0);
+  }
+
+  img {
+    margin-right: 0;
+    vertical-align: middle;
+  }
+
+  .change-avatar-hint {
+    width: 100%;
+
+    transition: transform 230ms ease-in-out;
+    transform: translateY(100%);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    text-align: center;
+    height: 100%;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    line-height: 150px;
+  }
+}

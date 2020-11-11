@@ -1,12 +1,12 @@
 <template>
-  <div class="comment-component" :class="{'no-likes': comment.likes === 0}">
+  <div class="comment-component">
     <div class="comment">
       <UserAvatar class="comment-avatar" :size="25" :username="comment.username" />
 
       <div class="comment-body">
         <div class="comment-username">
           <nuxt-link :to="comment.username">{{ comment.username }}</nuxt-link>
-          <div @click="deleteComment">
+          <div ref="deleteCommentRef">
             <IconBase
               class="comment-delete"
               v-if="comment.isMine"
@@ -25,17 +25,16 @@
         <div class="comment-action">
           <div>
             <span class="comment-date">{{ comment.timeAgo }}</span>
-            <span
-              v-if="$store.getters['account/isAuth']"
-              class="comment-action__answer"
-              @click="replyToComment"
-            >Ответить</span>
+            <span ref="replyToCommentRef" v-if="isAuth" class="comment-action__answer">Ответить</span>
           </div>
           <div
-            v-if="$store.getters['account/isAuth']"
+            ref="toggleLikeRef"
+            v-if="isAuth"
             class="comment-like__section"
-            @click="toggleLike"
-            :class="{ 'comment-liked': comment.isLiked }"
+            :class="{
+              'no-likes': comment.likes === 0,
+              'comment-liked': comment.isLiked
+            }"
           >
             <IconBase name="like" width="12" height="12" viewbox="0 0 50 50">
               <IconLike />
@@ -45,7 +44,7 @@
         </div>
 
         <div v-if="comment.repliesCount" class="comment-subcomments">
-          <button class="comment-subcomments__button" @click="toggleReplies">
+          <button ref="toggleRepliesRef" class="comment-subcomments__button">
             {{ comment.isRepliesLoaded ?
             '― Скрыть ответы' :
             `― Посмотреть ответы (${comment.repliesCount})` }}
@@ -55,8 +54,8 @@
               <Comment
                 v-for="comment in comment.replies"
                 :comment="comment"
+                :isReply="true"
                 :key="comment.id"
-                @likeComment="$emit('likeComment', this.comment)"
               />
             </div>
           </div>
@@ -66,8 +65,7 @@
           <textarea
             ref="commentReplyInputRef"
             class="comment-reply__input"
-            @input="resizeComment"
-            @keypress="addReply"
+            @input="autoResizeTextarea($event.target, 2)"
             rows="1"
             type="text"
             v-model="replyText"
@@ -80,10 +78,17 @@
 </template>
 
 <script>
+// main
+import { mapState, mapGetters } from 'vuex'
+
+// components
 import IconBase from '~/components/Icons/IconBase'
 import IconLike from '~/components/Icons/IconLike'
 import IconClose from '~/components/Icons/IconClose'
 import UserAvatar from '~/components/Avatar/UserAvatar'
+
+// utils
+import { autoResizeTextarea } from '~/utils/index'
 
 export default {
   name: 'Comment',
@@ -91,6 +96,10 @@ export default {
     comment: {
       type: Object,
       required: true
+    },
+    isReply: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -108,7 +117,11 @@ export default {
       repliesPaginate: null
     }
   },
+  computed: {
+    ...mapGetters({ isAuth: 'account/isAuth' })
+  },
   methods: {
+    autoResizeTextarea,
     toggleReplies() {
       if (this.comment.isRepliesLoaded) {
         this.showReplies = false
@@ -117,59 +130,29 @@ export default {
         this.loadReplies()
       }
     },
-    async addReply(event) {
-      if (event.keyCode === 13 && event.shiftKey && this.replyText) {
-        event.preventDefault()
-
-        const { data: comment } = await this.$store.dispatch('comment/addComment', {
-          postId: this.postId,
-          commentId: this.comment.id,
-          text: this.replyText,
-          isReply: true
-        })
-      }
-    },
     loadReplies() {
       if (!this.comment.isRepliesLoading) this.$emit('loadReplies', this.comment.id)
     },
-    resizeComment(event) {
-      const textarea = event.target
-      textarea.style.height = 'auto'
-      textarea.style.height = textarea.scrollHeight + 2 + 'px'
+    async injectAuthActions() {
+      const module = await import('./commentAuthActions')
+      for (let key in module) this[key] = module[key].bind(this)
+      this.setupListenersForReferences()
     },
-    toggleLike() {
-      this.comment.isLiked ? this.unlikeComment() : this.likeComment()
-    },
-    async likeComment() {
-      try {
-        await this.$store.dispatch('comment/likeComment', this.comment)
-        this.$emit('likeComment', this.comment)
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async unlikeComment() {
-      try {
-        await this.$store.dispatch('comment/unlikeComment', this.comment)
-        this.$emit('unlikeComment', this.comment)
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async deleteComment() {
-      try {
-        await this.$store.dispatch('comment/deleteComment', this.comment)
-        this.$emit('deleteComment', this.comment)
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    replyToComment() {
-      this.isReplying = true
-
-      this.$nextTick(() => {
-        this.$refs.commentReplyInputRef.focus()
-      })
+    setupListenersForReferences() {
+      console.log(this.$refs)
+      console.log(this.$el.querySelector('.comment-reply'))
+      // this.$nextTick(() => {
+      //   this.$refs.deleteCommentRef.onclick = this.deleteComment
+      //   this.$refs.replyToCommentRef.onclick = this.replyToComment
+      //   this.$refs.toggleLikeRef.onclick = this.toggleLike
+      //   this.$refs.commentReplyInputRef.onkeydown = this.addReply
+      //   this.$refs.toggleRepliesRef.onclick = this.toggleReplies
+      // })
+    }
+  },
+  async mounted() {
+    if (this.isAuth) {
+      this.injectAuthActions()
     }
   }
 }

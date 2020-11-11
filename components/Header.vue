@@ -5,7 +5,7 @@
         <div class="logo"></div>
       </nuxt-link>
 
-      <Search />
+      <!-- <Search /> -->
 
       <div class="header-auth">
         <nav>
@@ -42,13 +42,11 @@
 
 <script>
 import { mapState } from 'vuex'
-import User from '~/components/User'
 import Search from '~/components/Search'
 import AuthUserAvatar from '~/components/Avatar/AuthUserAvatar'
 
 export default {
   components: {
-    User,
     Search,
     AuthUserAvatar
   },
@@ -58,7 +56,7 @@ export default {
   methods: {
     async signOut() {
       await this.$store.dispatch('auth/signOut')
-          this.$router.replace('/')
+      this.$router.replace('/')
     }
   }
 }

@@ -30,6 +30,10 @@
   font-size: 14px;
   flex-direction: column;
 
+  &:hover .comment-like__section {
+    opacity: 1;
+  }
+
   &:last-child {
     border-bottom: 0;
   }
@@ -136,8 +140,21 @@
     font-size: 13px;
   }
 
+  &.no-likes {
+    opacity: 0;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    span.comment-likes {
+      display: none;
+    }
+  }
+
   &.comment-liked {
     span.comment-likes {
+      display: inline;
       color: $color-red-light;
     }
 
@@ -148,17 +165,17 @@
 }
 
 .comment-component.no-likes {
-  span.comment-likes {
-    display: none;
-  }
+  // span.comment-likes {
+  //   display: none;
+  // }
 
-  .comment-like__section {
-    opacity: 0;
-  }
+  // .comment-like__section {
+  //   opacity: 0;
+  // }
 
-  &:hover .comment-like__section {
-    opacity: 1;
-  }
+  // &:hover .comment-like__section {
+  //   opacity: 1;
+  // }
 }
 
 .comment-subcomments {

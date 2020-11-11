@@ -29,8 +29,8 @@ export default {
   components: {
     AuthUserProfile: () => import('~/components/UserProfile/Auth'),
     UserNotFound: () => import('~/components/UserProfile/UserNotFound'),
-    OtherUserProfile: () => import('~/components/UserProfile/Other'),
-    Post: () => import('~/components/Post/Post'),
+    OtherUserProfile: () => import('~/components/UserProfile/OtherProfile'),
+    Post: () => import('~/components/Post'),
     Modal: () => import('~/components/Modal')
   },
   data() {

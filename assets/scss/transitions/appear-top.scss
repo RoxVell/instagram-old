@@ -1,0 +1,17 @@
+.appear-top {
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+
+  &-enter-active,
+  &-leave-active {
+    transition: all 250ms ease-in-out;
+  }
+
+  &-enter-to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,5 +1,13 @@
 import { APP_ID } from '~/firebase/init'
 
+function onSnapshot(query, cb) {
+  return new Promise((resolve, reject) => {
+    query.onSnapshot((snapshot) => {
+      cb(snapshot)
+      resolve(snapshot)
+    }, reject)
+  })
+}
 
 export async function* QueryPaginate(query, limit, cb) {
   let lastSnapshot = null
@@ -9,14 +17,20 @@ export async function* QueryPaginate(query, limit, cb) {
   do {
     if (lastSnapshot) query = query.startAfter(lastSnapshot)
 
-    const documentSnapshots = await query.get()
-    const { docs } = documentSnapshots
+    let snapshot = null
 
-    if (docs.length < limit) {
-      return getDocuments(documentSnapshots)
+    if (cb) {
+      snapshot = await onSnapshot(query, cb)
     } else {
+      snapshot = await query.get()
+    }
+
+    if (snapshot.size < limit) {
+      return getDocuments(snapshot)
+    } else {
+      const { docs } = snapshot
       lastSnapshot = docs[docs.length - 1]
-      yield getDocuments(documentSnapshots)
+      yield getDocuments(snapshot)
     }
   } while (lastSnapshot)
 }
