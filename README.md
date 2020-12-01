@@ -1,6 +1,4 @@
-# paru_gram
-
-> My cat&#39;s pajamas Nuxt.js project
+# Instagram (Vue.js)
 
 ## Build Setup
 
