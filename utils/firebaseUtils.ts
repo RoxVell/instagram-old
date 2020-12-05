@@ -1,10 +1,7 @@
-import { storage, APP_ID } from '~/firebase/init'
-import DocumentDataWithId from '~/types/DocumentDataWithId'
+import firebase from 'firebase'
+import { APP_ID } from '~/firebase/init'
 
-function onSnapshot(
-  query: firebase.firestore.Query,
-  cb: Function
-): Promise<firebase.firestore.QuerySnapshot> {
+function onSnapshot(query: firebase.firestore.Query, cb: Function): Promise<firebase.firestore.QuerySnapshot> {
   return new Promise((resolve, reject) => {
     query.onSnapshot((snapshot) => {
       cb(snapshot)
@@ -13,25 +10,15 @@ function onSnapshot(
   })
 }
 
-export async function* QueryPaginate(
-  query: firebase.firestore.Query,
-  limit: number,
-  cb?: Function
-): AsyncGenerator<DocumentDataWithId[]> {
-  let lastSnapshot: firebase.firestore.DocumentSnapshot | null = null
+export async function* QueryPaginate(query: firebase.firestore.Query, limit = 15, callback?: Function) {
+  let lastSnapshot = null
 
   query = query.limit(limit)
 
   do {
     if (lastSnapshot) query = query.startAfter(lastSnapshot)
 
-    let snapshot: firebase.firestore.QuerySnapshot | null = null
-
-    if (cb) {
-      snapshot = await onSnapshot(query, cb)
-    } else {
-      snapshot = await query.get()
-    }
+    let snapshot = callback ? await onSnapshot(query, callback) : await query.get()
 
     if (snapshot.size < limit) {
       return getDocuments(snapshot)
@@ -43,43 +30,23 @@ export async function* QueryPaginate(
   } while (lastSnapshot)
 }
 
-export function getDocuments(
-  documentSnapshots: firebase.firestore.QuerySnapshot
-): Array<DocumentDataWithId> {
-  const data: Array<DocumentDataWithId> = []
+export function getDocuments<T>(documentSnapshots: firebase.firestore.DocumentSnapshot[] | firebase.firestore.QuerySnapshot): Array<T & { id: string }> {
+  const documents: Array<T & { id: string }> = []
 
-  documentSnapshots.forEach((doc) => {
-    data.push({
-      id: doc.id,
-      ...doc.data()
+  documentSnapshots.forEach((snapshot: firebase.firestore.QueryDocumentSnapshot | firebase.firestore.DocumentSnapshot) => {
+    if (snapshot.exists) documents.push({
+      id: snapshot.id,
+      ...snapshot.data() as T
     })
   })
 
-  return data
+  return documents
 }
 
 export function getUserAvatar(username: string) {
   return `https://firebasestorage.googleapis.com/v0/b/${APP_ID}.appspot.com/o/avatars%2F${username}.jpg?alt=media`
 }
 
-export function getDefaultUserAvatar(fileName: string = 'avatar_default.jpg') {
+export function getDefaultUserAvatar(fileName = 'avatar_default.jpg') {
   return `https://firebasestorage.googleapis.com/v0/b/${APP_ID}.appspot.com/o/avatars%2F${fileName}?alt=media`
 }
-
-// export function uploadPhoto(photo, directory) {
-//   return new Promise((resolve, reject) => {
-//     const photoReference = storage.ref(directory)
-//     const uploadTask = photoReference.put(photo)
-
-//     uploadTask.on(
-//       storage.TaskEvent.STATE_CHANGED,
-//       () => {},
-//       (error) => reject(error),
-//       () => {
-//         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-//           resolve(downloadURL)
-//         })
-//       }
-//     )
-//   })
-// }
