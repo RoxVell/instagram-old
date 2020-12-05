@@ -28,7 +28,9 @@ module.exports = {
   /*
    ** Global CSS
    */
-  css: [],
+  css: [
+    'remixicon/fonts/remixicon.css'
+  ],
 
   /*
    ** Plugins to load before mounting the App
@@ -61,6 +63,6 @@ module.exports = {
         extensions: ['.js', '.vue']
       }
     }
-  }
-  // buildModules: ['@nuxt/typescript-build']
+  },
+  buildModules: ['@nuxt/typescript-build']
 }

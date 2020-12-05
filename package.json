@@ -5,7 +5,7 @@
   "author": "Anton",
   "private": true,
   "scripts": {
-    "dev": "nuxt --hostname 0.0.0.0 --port 2000",
+    "dev": "nuxt --hostname 0.0.0.0 --port 4500",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate"
@@ -16,12 +16,15 @@
     "firebase": "^5.7.0",
     "javascript-time-ago": "^2.0.2",
     "nuxt": "^2.0.0",
+    "nuxt-property-decorator": "^2.8.8",
     "perfect-scrollbar": "^1.4.0",
+    "remixicon": "^2.5.0",
     "vue-advanced-cropper": "^0.12.5",
     "vuelidate": "^0.7.4"
   },
   "devDependencies": {
-    "@nuxt/typescript-build": "^0.3.1",
+    "@nuxt/types": "^2.14.7",
+    "@nuxt/typescript-build": "^0.3.10",
     "node-sass": "^4.11.0",
     "nodemon": "^1.11.0",
     "sass-loader": "^7.1.0"
