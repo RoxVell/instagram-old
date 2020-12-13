@@ -35,19 +35,20 @@
   </div>
 </template>
 
-<script>
-import UserAvatar from '~/components/Avatar/UserAvatar'
+<script lang="ts">
+import { Vue, Component, Prop } from 'nuxt-property-decorator'
 
-export default {
-  props: {
-    user: {
-      type: Object,
-      required: true
-    }
-  },
+import UserAvatar from '~/components/Avatar/UserAvatar.vue'
+
+import User from '~/types/User'
+
+@Component({
   components: {
-    UserAvatar
-  }
+    UserAvatar,
+  },
+})
+export default class DefaultUserProfile extends Vue {
+  @Prop({ type: Object, required: true }) user: User
 }
 </script>
 

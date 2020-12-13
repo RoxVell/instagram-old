@@ -86,9 +86,8 @@ export function toggleLikePost() {
 }
 
 export async function addComment(event) {
-  console.log('trigger')
-  console.log(event)
   const ENTER_KEY_CODE = 13
+
   if (event.keyCode === ENTER_KEY_CODE && event.shiftKey && this.commentText) {
     event.preventDefault()
     this.commentAdding = true
@@ -98,6 +97,8 @@ export async function addComment(event) {
         text: this.commentText,
         postId: this.post.id
       })
+
+      this.commentText = '';
     } catch (error) {
       console.error(error)
     }
