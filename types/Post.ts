@@ -3,7 +3,7 @@ import Timestamp from './Timestamp'
 interface Post {
   id: string
   username: string
-  content: Array<string>
+  content: string[]
   description: string
   created_date: Timestamp
   likes: number

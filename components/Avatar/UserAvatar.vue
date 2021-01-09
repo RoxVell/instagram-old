@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { getUserAvatar, getDefaultUserAvatar } from '~/utils/firebaseUtils.js'
+import { getUserAvatar, getDefaultUserAvatar } from '~/utils/firebaseUtils'
 
 export default {
   props: {

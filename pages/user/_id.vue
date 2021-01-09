@@ -27,8 +27,8 @@ import Modal from '~/components/Modal'
 export default {
   mixins: [ProfilePageMixin],
   components: {
-    AuthUserProfile: () => import('~/components/UserProfile/Auth'),
-    UserNotFound: () => import('~/components/UserProfile/UserNotFound'),
+    AuthUserProfile: () => import('~/components/UserProfile/AuthProfile'),
+    UserNotFound: () => import('~/components/UserProfile/UserNotFoundProfile'),
     OtherUserProfile: () => import('~/components/UserProfile/OtherProfile'),
     Post: () => import('~/components/Post'),
     Modal: () => import('~/components/Modal')
