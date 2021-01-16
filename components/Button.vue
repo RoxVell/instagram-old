@@ -15,25 +15,21 @@
   </button>
 </template>
 
-<script>
-import IconBase from '~/components/Icons/IconBase'
-import IconSpinner from '~/components/Icons/IconSpinner'
+<script lang="ts">
+import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator'
 
-export default {
-  props: {
-    loading: {
-      type: Boolean,
-      default: false
-    },
-    loadingColor: {
-      type: String,
-      default: 'white'
-    }
-  },
+import IconBase from '~/components/Icons/IconBase.vue'
+import IconSpinner from '~/components/Icons/IconSpinner.vue'
+
+@Component({
   components: {
     IconBase,
-    IconSpinner
-  }
+    IconSpinner,
+  },
+})
+export default class Button extends Vue {
+  @Prop({ type: Boolean, default: false }) loading: boolean
+  @Prop({ type: String, default: '#ffffff' }) loadingColor: string
 }
 </script>
 
