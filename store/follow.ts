@@ -10,14 +10,16 @@ import { NotAuthenticatedError } from '~/store/auth'
   namespaced: true,
 })
 export default class FollowStore extends VuexModule {
-  @VuexAction followUser(followedUsername: string) {
+  @VuexAction
+  followUser(followedUsername: string) {
     const followUserAction = functions.httpsCallable('followUser')
 
     return followUserAction({ followedUsername })
       .then(() => accountStore.INCREMENT_FOLLOWING_COUNT())
   }
 
-  @VuexAction unfollowUser(followedUsername: string) {
+  @VuexAction
+  unfollowUser(followedUsername: string) {
     const unfollowUserAction = functions.httpsCallable('unfollowUser')
 
     return unfollowUserAction({ followedUsername })
@@ -36,7 +38,8 @@ export default class FollowStore extends VuexModule {
       .then((snapshot) => snapshot.exists)
   }
 
-  @VuexAction getFollowersByUsername(username: string) {
+  @VuexAction
+  getFollowersByUsername(username: string) {
     const query = firestore
       .collection('followers')
       .doc(username)

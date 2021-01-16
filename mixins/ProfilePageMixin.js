@@ -71,6 +71,7 @@ const ProfilePageMixin = {
 
     if (this.profileType !== PROFILE_TYPES.userNotFound) {
       this.queryPaginate = await this.$store.dispatch('post/getPostsByUsername', this.user.username)
+      this.favoritePostsQueryPaginate = await this.$store.dispatch('post/getFavoritePosts');
       this.getPosts()
     }
   }

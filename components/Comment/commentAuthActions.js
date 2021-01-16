@@ -4,12 +4,17 @@ export async function addReply(event) {
   if (event.keyCode === ENTER_KEY_CODE && event.shiftKey && this.replyText) {
     event.preventDefault()
 
-    const { data: comment } = await this.$store.dispatch('comment/addComment', {
-      postId: this.postId,
+    const { data: reply } = await this.$store.dispatch('comment/addComment', {
+      postId: this.comment.postId,
       commentId: this.comment.id,
       text: this.replyText,
       isReply: true
     })
+
+    this.isReplying = false;
+    this.replyText = false;
+
+    this.$emit('addReply', reply)
   }
 }
 

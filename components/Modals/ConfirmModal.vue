@@ -7,33 +7,25 @@
     <slot></slot>
 
     <template #footer>
-      <button @click="$emit('cancel')" class="btn btn_blue">{{cancelTitle}}</button>
-      <button @click="$emit('confirm')" class="btn btn_red">{{confirmTitle}}</button>
+      <button @click="$emit('cancel')" class="btn btn_blue">{{ cancelTitle }}</button>
+      <button @click="$emit('confirm')" class="btn btn_red">{{ confirmTitle }}</button>
     </template>
   </Modal>
 </template>
 
-<script>
-import Modal from '~/components/Modal'
+<script lang="ts">
+import Modal from '~/components/Modal.vue'
+import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator'
 
-export default {
-  props: {
-    value: {
-      type: Boolean,
-      required: true
-    },
-    cancelTitle: {
-      type: String,
-      default: 'Отменить'
-    },
-    confirmTitle: {
-      type: String,
-      default: 'Подтвердить'
-    }
-  },
+@Component({
   components: {
-    Modal
-  }
+    Modal,
+  },
+})
+export default class ConfirmModal extends Vue {
+  @Prop({ type: Boolean, required: true }) value: boolean
+  @Prop({ type: String, default: 'Отменить' }) cancelTitle: string
+  @Prop({ type: String, default: 'Подтвердить' }) confirmTitle: string
 }
 </script>
 

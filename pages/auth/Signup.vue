@@ -5,8 +5,12 @@
       <label class="required" for="signup-mail">E-mail</label>
       <input id="signup-mail" type="email" v-model.trim="email" />
       <p class="form-element__desc form-element__error">
-        <template v-if="$v.email.$dirty && !$v.email.required">Поле обязательно для заполнения</template>
-        <template v-else-if="$v.email.$dirty && !$v.email.email">Поле должно иметь формат email</template>
+        <template v-if="$v.email.$dirty && !$v.email.required"
+          >Поле обязательно для заполнения</template
+        >
+        <template v-else-if="$v.email.$dirty && !$v.email.email"
+          >Поле должно иметь формат email</template
+        >
       </p>
     </div>
 
@@ -14,10 +18,12 @@
       <label class="required" for="signup-login">Имя пользователя</label>
       <input id="signup-login" v-model.lazy.trim="username" @blur="usernameCheck" />
       <p class="form-element__desc form-element__error">
-        <template v-if="$v.username.$dirty && !$v.username.required">Поле обязательно для заполнения</template>
-        <template
-          v-else-if="$v.username.$dirty && !$v.username.$pending && !$v.username.isUnique"
-        >Имя пользователя {{ $v.username.$model }} занято</template>
+        <template v-if="$v.username.$dirty && !$v.username.required"
+          >Поле обязательно для заполнения</template
+        >
+        <template v-else-if="$v.username.$dirty && !$v.username.$pending && !$v.username.isUnique"
+          >Имя пользователя {{ $v.username.$model }} занято</template
+        >
       </p>
     </div>
 
@@ -25,10 +31,13 @@
       <label class="required" for="signup-password">Пароль</label>
       <input id="signup-password" type="password" v-model="password" />
       <p class="form-element__desc form-element__error">
-        <template v-if="$v.password.$dirty && !$v.password.required">Поле обязательно для заполнения</template>
-        <template
-          v-else-if="$v.password.$dirty && !$v.password.minLength"
-        >Пароль должен содержать не менее {{ $v.password.$params.minLength.min }} символов</template>
+        <template v-if="$v.password.$dirty && !$v.password.required"
+          >Поле обязательно для заполнения</template
+        >
+        <template v-else-if="$v.password.$dirty && !$v.password.minLength"
+          >Пароль должен содержать не менее
+          {{ $v.password.$params.minLength.min }} символов</template
+        >
       </p>
     </div>
 
@@ -60,7 +69,7 @@ import { required, minLength, email, sameAs } from 'vuelidate/lib/validators'
 const RegisterComponent = Vue.extend({
   mixins: [validationMixin],
   components: {
-    Button
+    Button,
   },
   data() {
     return {
@@ -68,7 +77,7 @@ const RegisterComponent = Vue.extend({
       username: '',
       password: '',
       repeatPassword: '',
-      loading: false
+      loading: false,
     }
   },
   validations: {
@@ -82,20 +91,20 @@ const RegisterComponent = Vue.extend({
           .dispatch('auth/checkUsername', username)
           .then((isUnique) => isUnique)
           .catch(() => false)
-      }
+      },
     },
     email: {
       required,
-      email
+      email,
     },
     password: {
       required,
-      minLength: minLength(8)
+      minLength: minLength(8),
     },
     repeatPassword: {
       required,
-      sameAsPassword: sameAs('password')
-    }
+      sameAsPassword: sameAs('password'),
+    },
   },
   methods: {
     usernameCheck() {
@@ -117,7 +126,7 @@ const RegisterComponent = Vue.extend({
       const userData = {
         email: this.email,
         username: this.username,
-        password: this.password
+        password: this.password,
       }
 
       try {
@@ -134,16 +143,16 @@ const RegisterComponent = Vue.extend({
       return this.$store.dispatch('auth/createUserWithEmailAndPassword', {
         email,
         username,
-        password
+        password,
       })
     },
     signInWithEmailAndPassword({ email, password }) {
       return this.$store.dispatch('auth/signInWithEmailAndPassword', {
         email,
-        password
+        password,
       })
-    }
-  }
+    },
+  },
 })
 
 export default RegisterComponent

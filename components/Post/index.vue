@@ -6,15 +6,14 @@
     <div class="post-comments">
       <div class="users-comments" ref="usersComments">
         <CommentOwner :postOwner="postOwner" :post="post" />
-        <transition-group name="disapear-to-center">
-          <Comment
-            v-for="comment in comments"
-            :key="comment.id"
-            :comment="comment"
-            @loadReplies="loadReplies"
-            @deleteComment="onDeleteComment"
-          />
-        </transition-group>
+        <!-- <transition-group name="disapear-to-center"> -->
+        <Comment
+          v-for="comment in comments"
+          :key="comment.id"
+          :comment="comment"
+          @loadReplies="loadReplies"
+        />
+        <!-- </transition-group> -->
       </div>
 
       <div class="comment-actions">
@@ -39,7 +38,7 @@
           </div>
         </div>
 
-        <div v-if="isAuth">
+        <div v-if="isAuth && !isMine">
           <div
             class="comment-actions__item comment-actions__item-bookmark"
             :class="{ 'comment-actions__item-bookmark_saved': post.isSaved }"
@@ -92,12 +91,12 @@ export default {
   props: {
     post: {
       type: Object,
-      required: true
+      required: true,
     },
     postOwner: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
     Comment,
@@ -106,11 +105,11 @@ export default {
     IconLike,
     IconComments,
     IconBookmark,
-    IconSpinner
+    IconSpinner,
   },
   computed: {
     ...mapState({
-      user: (state) => state.account.user
+      user: (state) => state.account.user,
     }),
     ...mapGetters({ isAuth: 'account/isAuth' }),
     defaultCommentHandlers() {
@@ -118,12 +117,15 @@ export default {
       const handlers = [this.handleTimeAgo, this.addPostId]
       if (this.commentsLikes && this.commentsLikes.size > 0) handlers.push(this.handleIsLiked)
       return this.isAuth ? [...handlers, this.handleIsMine] : handlers
-    }
+    },
+    isMine() {
+      return this.postOwner === this.user
+    },
   },
   watch: {
     comments() {
       this.scrollbar.update()
-    }
+    },
   },
   data() {
     return {
@@ -136,7 +138,7 @@ export default {
       commentAdding: false,
       intervalTimeUpdate: null,
       commentsLikes: null,
-      scrollbar: null
+      scrollbar: null,
     }
   },
   methods: {
@@ -149,7 +151,7 @@ export default {
 
         let queryPaginate = await this.$store.dispatch('comment/loadReplies', {
           postId: this.post.id,
-          commentId: commentId
+          commentId: commentId,
         })
 
         const replies = await queryPaginate.next()
@@ -162,26 +164,28 @@ export default {
         console.error(error)
       }
     },
-    // async addComment(event) {
-    //   if (event.keyCode === ENTER_KEY_CODE && event.shiftKey && this.commentText) {
-    //     event.preventDefault()
-    //     this.commentAdding = true
+    async addComment(event) {
+      if (event.keyCode === ENTER_KEY_CODE && event.shiftKey && this.commentText) {
+        event.preventDefault()
+        this.commentAdding = true
 
-    //     try {
-    //       let { data: comment } = await this.$store.dispatch('comment/addComment', {
-    //         text: this.commentText,
-    //         postId: this.post.id
-    //       })
-    //     } catch (error) {
-    //       console.error(error)
-    //     }
+        try {
+          let { data: comment } = await this.$store.dispatch('comment/addComment', {
+            text: this.commentText,
+            postId: this.post.id,
+          })
+        } catch (error) {
+          console.error(error)
+        }
 
-    //     this.commentAdding = false
-    //   }
-    // },
+        this.commentAdding = false
+      }
+    },
     onAddReply(replies, commentId) {
+      console.log(`[Post] onAddReply: commentId: ${commentId}`, replies)
       replies = this.handleComments(replies, this.defaultCommentHandlers)
       const comment = this.comments.find((comment) => comment.id === commentId)
+      console.log(comment)
       comment.isRepliesLoaded = true
       comment.replies.push(...replies)
     },
@@ -263,6 +267,9 @@ export default {
         this.getComments()
       }
     },
+    getCommentIndexById(id) {
+      return this.comments.findIndex((comment) => comment.id === id)
+    },
     handleCommentActions(snapshot) {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
@@ -270,14 +277,41 @@ export default {
 
           this.onAddComment({
             ...change.doc.data(),
-            id: change.doc.id
+            id: change.doc.id,
           })
         }
         if (change.type === 'modified') {
+          const updatedComment = change.doc.data()
+          updatedComment.id = change.doc.id
+
+          let commentIndexToUpdate = this.comments.findIndex(
+            (comment) => comment.id === change.doc.id
+          )
+
+          if (commentIndexToUpdate !== -1) {
+            // console.log(commentToUpdate)
+            console.log(commentIndexToUpdate)
+            // this.comments[commentIndexToUpdate] = this.handleComments(
+            //   [updatedComment],
+            //   this.defaultCommentHandlers
+            // )[0]
+
+            this.comments.splice(
+              commentIndexToUpdate,
+              1,
+              this.handleComments([updatedComment], this.defaultCommentHandlers)[0]
+            )
+          }
+
+          // comment =
           console.log('Modified: ', change.doc.id)
         }
+
         if (change.type === 'removed') {
           console.log('Removed: ', change.doc.id)
+          const commentIndexToRemove = this.getCommentIndexById(change.doc.id)
+          console.log(commentIndexToRemove)
+          if (commentIndexToRemove !== -1) this.comments.splice(commentIndexToRemove, 1)
         }
       })
     },
@@ -287,10 +321,10 @@ export default {
       this.setupListenersForReferences()
     },
     setupListenersForReferences() {
-      this.$refs.savePostRef.onclick = this.toggleSavePost
+      if (this.$refs.savePostRef) this.$refs.savePostRef.onclick = this.toggleSavePost
       this.$refs.likePostRef.onclick = this.toggleLikePost
       this.$refs.addCommentRef.onkeydown = this.addComment
-    }
+    },
   },
   beforeDestroy() {
     clearInterval(this.intervalTimeUpdate)
@@ -315,12 +349,12 @@ export default {
 
     this.queryPaginate = await this.$store.dispatch('comment/getCommentsByPostId', {
       postId: this.post.id,
-      cb: this.handleCommentActions
+      cb: this.handleCommentActions,
     })
 
     await this.getComments()
     this.intervalTimeUpdate = setInterval(this.updateCommentsTime, 10000)
-  }
+  },
 }
 </script>
 

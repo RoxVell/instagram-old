@@ -31,7 +31,9 @@
 
             <template v-else>
               <nuxt-link to="/auth/login" class="header-menu__item" tag="a">Войти</nuxt-link>
-              <nuxt-link to="/auth/signup" class="header-menu__item" tag="a">Зарегистрироваться</nuxt-link>
+              <nuxt-link to="/auth/signup" class="header-menu__item" tag="a"
+                >Зарегистрироваться</nuxt-link
+              >
             </template>
           </ul>
         </nav>
@@ -40,24 +42,27 @@
   </header>
 </template>
 
-<script>
-import { mapState } from 'vuex'
-import Search from '~/components/Search'
-import AuthUserAvatar from '~/components/Avatar/AuthUserAvatar'
+<script lang="ts">
+import { Vue, Component, namespace, Prop } from 'nuxt-property-decorator'
+import { accountStore, authStore } from '~/store'
 
-export default {
+import Search from '~/components/Search.vue'
+import AuthUserAvatar from '~/components/Avatar/AuthUserAvatar.vue'
+
+@Component({
   components: {
     Search,
-    AuthUserAvatar
+    AuthUserAvatar,
   },
-  computed: mapState({
-    user: (state) => state.account.user
-  }),
-  methods: {
-    async signOut() {
-      await this.$store.dispatch('auth/signOut')
-      this.$router.replace('/')
-    }
+})
+export default class Header extends Vue {
+  get user() {
+    return accountStore.user
+  }
+
+  async signOut() {
+    await authStore.signOut()
+    this.$router.replace('/')
   }
 }
 </script>
