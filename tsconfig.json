@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
