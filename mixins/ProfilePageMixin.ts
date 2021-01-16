@@ -1,13 +1,25 @@
 import Vue from 'vue'
-import { debounce, scrollHandler } from '~/utils/index'
 import ProfilePost from '~/components/ProfilePost'
 import Gallery from '~/components/Gallery'
 import DocumentDataWithId from '~/types/DocumentDataWithId'
+import { debounce, scrollHandler } from '~/utils/index'
+import Post from '~/types/Post'
 
-enum ProfileType {
-  Mine = 'AuthUserProfile',
-  Other = 'OtherUserProfile',
-  notFound = 'UserNotFound'
+enum AccountPageType {
+  Auth = 'AuthUserProfile',
+  Common = 'OtherUserProfile',
+  NotFound = 'UserNotFound'
+}
+
+interface ProfilePageState {
+  user: null
+  posts: Post[]
+  favoritePosts: Post[]
+  loading: boolean
+  accountPageType: AccountPageType
+  lazyImageObserver: null
+  postsQueryPaginate: AsyncGenerator<DocumentDataWithId[]>
+  favoritePostsQueryPaginate: AsyncGenerator<DocumentDataWithId[]>
 }
 
 const ProfilePageMixin = Vue.extend({
@@ -23,18 +35,20 @@ const ProfilePageMixin = Vue.extend({
     return {
       user: null,
       posts: [],
+      favoritePosts: [],
       loading: false,
-      profileType: null as ProfileType | null,
+      accountPageType: null as unknown,
       lazyImageObserver: null,
-      queryPaginate: null as AsyncGenerator<DocumentDataWithId[]> | null
-    }
+      postsQueryPaginate: null as unknown,
+      favoritePostsQueryPaginate: null as unknown,
+    } as ProfilePageState
   },
   methods: {
     async getPosts() {
       this.loading = true
 
       try {
-        let result = await this.queryPaginate.next()
+        let result = await this.postsQueryPaginate.next()
         if (result.done) document.onscroll = null
         this.posts.push(...result.value)
       } catch (error) {
@@ -43,19 +57,42 @@ const ProfilePageMixin = Vue.extend({
 
       this.loading = false
     },
-    async identifyUser(username: string): Promise<ProfileType> {
-      if (!this.validateUsername(username)) return ProfileType.notFound
+    async getFavoritePosts() {
+      this.loading = true
 
-      const myAccount = this.$store.state.account.user
 
-      if (myAccount && myAccount.username === username) {
-        this.user = myAccount
-        return ProfileType.Mine
+      const { data } = await this.$store.dispatch('post/getFavoritePosts')
+      this.favoritePosts = data
+      // console.log(this.favoritePosts.data);
+
+      // try {
+      //   let result = await this.favoritePostsQueryPaginate.next()
+      //   console.log(result);
+
+      //   if (result.done) {
+      //     document.onscroll = null
+      //   } else {
+      //     this.favoritePosts.push(...result.value)
+      //   }
+      // } catch (error) {
+      //   console.log(error)
+      // }
+
+      this.loading = false
+    },
+    async getAccountPageType(username: string): Promise<AccountPageType> {
+      if (!this.validateUsername(username)) return AccountPageType.NotFound
+
+      const currentUser = this.$store.state.account.user
+
+      if (currentUser && currentUser.username === username) {
+        this.user = currentUser
+        return AccountPageType.Auth
       } else {
         // if it's not my profile try to get it from firestore
         this.user = await this.$store.dispatch('account/getUser', username)
 
-        return this.user ? ProfileType.Other : ProfileType.notFound
+        return this.user ? AccountPageType.Common : AccountPageType.NotFound
       }
     },
     validateUsername(username: string) {
@@ -64,18 +101,19 @@ const ProfilePageMixin = Vue.extend({
     }
   },
   mounted() {
-    document.onscroll = debounce(() => {
+    document.addEventListener('scroll', debounce(() => {
       if (!this.loading) scrollHandler(500, this.getPosts)
-    }, 200)
+    }, 200))
   },
   async created() {
-    this.profileType = await this.identifyUser(this.$route.params.id)
+    this.accountPageType = await this.getAccountPageType(this.$route.params.id)
 
-    if (this.profileType !== ProfileType.notFound) {
-      this.queryPaginate = await this.$store.dispatch('post/getPostsByUsername', this.user.username)
+    if (this.accountPageType !== AccountPageType.NotFound) {
+      this.postsQueryPaginate = await this.$store.dispatch('post/getPostsByUsername', this.user.username)
+      // this.favoritePostsQueryPaginate = await this.$store.dispatch('post/getFavoritePosts')
       this.getPosts()
     }
   }
 })
 
-export { ProfilePageMixin, ProfileType }
+export { ProfilePageMixin, AccountPageType as ProfileType }
