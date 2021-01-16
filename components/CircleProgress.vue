@@ -49,28 +49,28 @@ export default {
     value: {
       type: Number,
       default: 0,
-      required: true
+      required: true,
     },
     stroke: {
       type: Number,
-      default: 10
+      default: 10,
     },
     radius: {
       type: Number,
-      default: 100
+      default: 100,
     },
     showPercents: {
       type: Boolean,
-      default: true
+      default: true,
     },
     colorCircle: {
       type: String,
-      default: 'black'
+      default: 'black',
     },
     colorProgress: {
       type: String,
-      default: 'red'
-    }
+      default: 'red',
+    },
   },
   components: { IconCheck, IconBase },
   data() {
@@ -80,7 +80,7 @@ export default {
     return {
       normalizedRadius,
       circumference,
-      loaded: false
+      loaded: false,
     }
   },
   computed: {
@@ -94,13 +94,12 @@ export default {
         strokeDashoffset: this.strokeDashoffset,
         r: this.normalizedRadius,
         cx: this.radius,
-        cy: this.radius
+        cy: this.radius,
       }
-    }
+    },
   },
   watch: {
     value(value) {
-      console.log(value)
       if (value < 0) this.value = 0
       if (value > 100) this.value = 100
 
@@ -115,11 +114,46 @@ export default {
         this.loaded = true
         this.$emit('done')
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-@import '~assets/scss/components/CircleProgress.scss';
+.progress-container {
+  position: relative;
+  display: inline-block;
+}
+
+.progress-container_loaded {
+  #bar {
+    stroke: green;
+  }
+
+  .progress-container__check {
+    fill: green;
+  }
+}
+
+.progress-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 200px;
+  font-size: 25px;
+  color: black;
+  font-weight: 600;
+}
+
+circle {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+  fill: transparent;
+}
 </style>
