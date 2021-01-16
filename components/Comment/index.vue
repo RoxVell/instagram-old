@@ -1,7 +1,7 @@
 <template>
   <div class="comment-component">
     <div class="comment">
-      <UserAvatar class="comment-avatar" :size="25" :username="comment.username" />
+      <UserAvatar class="comment-avatar" :size="isReply ? 20 : 25" :username="comment.username" />
 
       <div class="comment-body">
         <div class="comment-username">
@@ -25,7 +25,9 @@
         <div class="comment-action">
           <div>
             <span class="comment-date">{{ comment.timeAgo }}</span>
-            <span ref="replyToCommentRef" v-if="isAuth" class="comment-action__answer">Ответить</span>
+            <span ref="replyToCommentRef" v-if="isAuth" class="comment-action__answer"
+              >Ответить</span
+            >
           </div>
           <div
             ref="toggleLikeRef"
@@ -33,7 +35,7 @@
             class="comment-like__section"
             :class="{
               'no-likes': comment.likes === 0,
-              'comment-liked': comment.isLiked
+              'comment-liked': comment.isLiked,
             }"
           >
             <IconBase name="like" width="12" height="12" viewbox="0 0 50 50">
@@ -44,10 +46,12 @@
         </div>
 
         <div v-if="comment.repliesCount" class="comment-subcomments">
-          <button ref="toggleRepliesRef" class="comment-subcomments__button">
-            {{ comment.isRepliesLoaded ?
-            '― Скрыть ответы' :
-            `― Посмотреть ответы (${comment.repliesCount})` }}
+          <button
+            ref="toggleRepliesRef"
+            class="comment-subcomments__button"
+            @click="toggleReplies()"
+          >
+            {{ showReplies ? '― Скрыть ответы' : `― Показать ответы (${comment.repliesCount})` }}
           </button>
           <div>
             <div v-if="showReplies">
@@ -66,6 +70,8 @@
             ref="commentReplyInputRef"
             class="comment-reply__input"
             @input="autoResizeTextarea($event.target, 2)"
+            @blur="onBlur($event)"
+            v-on:keyup.enter="addReply($event)"
             rows="1"
             type="text"
             v-model="replyText"
@@ -78,16 +84,13 @@
 </template>
 
 <script>
-// main
 import { mapState, mapGetters } from 'vuex'
 
-// components
 import IconBase from '~/components/Icons/IconBase'
 import IconLike from '~/components/Icons/IconLike'
 import IconClose from '~/components/Icons/IconClose'
 import UserAvatar from '~/components/Avatar/UserAvatar'
 
-// utils
 import { autoResizeTextarea } from '~/utils/index'
 
 export default {
@@ -95,36 +98,39 @@ export default {
   props: {
     comment: {
       type: Object,
-      required: true
+      required: true,
     },
     isReply: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   components: {
     IconBase,
     IconLike,
     IconClose,
-    UserAvatar
+    UserAvatar,
   },
   data() {
     return {
       isReplying: false,
-      showReplies: true,
+      showReplies: false,
       replyText: '',
       replies: [],
-      repliesPaginate: null
+      repliesPaginate: null,
     }
   },
   computed: {
-    ...mapGetters({ isAuth: 'account/isAuth' })
+    ...mapGetters({ isAuth: 'account/isAuth' }),
   },
   methods: {
     autoResizeTextarea,
+    onBlur(event) {
+      if (!this.replyText) this.isReplying = false
+    },
     toggleReplies() {
       if (this.comment.isRepliesLoaded) {
-        this.showReplies = false
+        this.showReplies = !this.showReplies
       } else {
         this.showReplies = true
         this.loadReplies()
@@ -139,22 +145,20 @@ export default {
       this.setupListenersForReferences()
     },
     setupListenersForReferences() {
-      console.log(this.$refs)
-      console.log(this.$el.querySelector('.comment-reply'))
-      // this.$nextTick(() => {
-      //   this.$refs.deleteCommentRef.onclick = this.deleteComment
-      //   this.$refs.replyToCommentRef.onclick = this.replyToComment
-      //   this.$refs.toggleLikeRef.onclick = this.toggleLike
-      //   this.$refs.commentReplyInputRef.onkeydown = this.addReply
-      //   this.$refs.toggleRepliesRef.onclick = this.toggleReplies
-      // })
-    }
+      this.$nextTick(() => {
+        this.$refs.deleteCommentRef.onclick = this.deleteComment
+        this.$refs.replyToCommentRef.onclick = this.replyToComment
+        this.$refs.toggleLikeRef.onclick = this.toggleLike
+        // this.$refs.commentReplyInputRef.onkeydown = this.addReply
+        // this.$refs.toggleRepliesRef.onclick = this.toggleReplies
+      })
+    },
   },
   async mounted() {
     if (this.isAuth) {
       this.injectAuthActions()
     }
-  }
+  },
 }
 </script>
 

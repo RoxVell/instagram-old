@@ -21,23 +21,23 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
-      loading: true
+      loading: true,
     }
   },
   components: {
     Header,
-    Spinner
+    Spinner,
   },
   computed: mapState({
-    isLoading: (state) => state.account.isLoading
+    isLoading: (state) => state.account.isLoading,
   }),
   watch: {
     isLoading: {
       handler(value) {
         this.loading = false
-      }
-    }
-  }
+      },
+    },
+  },
 }
 </script>
 
