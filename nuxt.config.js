@@ -64,5 +64,10 @@ module.exports = {
       }
     }
   },
-  buildModules: ['@nuxt/typescript-build']
+  buildModules: ['@nuxt/typescript-build'],
+  render: {
+    bundleRenderer: {
+      runInNewContext: false,
+    },
+  },
 }

@@ -14,10 +14,12 @@
     "@nuxtjs/axios": "^5.12.5",
     "cross-env": "^5.2.0",
     "firebase": "^8.2.1",
+    "inversify": "^5.0.5",
     "javascript-time-ago": "^2.0.2",
     "nuxt": "^2.0.0",
     "nuxt-property-decorator": "^2.8.8",
     "perfect-scrollbar": "1.5.0",
+    "reflect-metadata": "^0.1.13",
     "remixicon": "^2.5.0",
     "vue-advanced-cropper": "^0.12.5",
     "vuelidate": "^0.7.4"
